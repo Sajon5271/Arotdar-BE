@@ -5,6 +5,7 @@ import {
   HttpStatus,
   Injectable,
   NestInterceptor,
+  RequestMethod,
 } from '@nestjs/common';
 import { HTTP_CODE_METADATA, METHOD_METADATA } from '@nestjs/common/constants';
 import { Reflector } from '@nestjs/core';
@@ -26,14 +27,24 @@ export class GenericInterceptor<T>
     context: ExecutionContext,
     next: CallHandler,
   ): Observable<GenericResponse<T>> {
-    const httpCode = this.reflector.get(METHOD_METADATA, context.getHandler());
-    console.log(httpCode);
+    const httpCode = this.reflector.get(
+      HTTP_CODE_METADATA,
+      context.getHandler(),
+    );
+    const method = this.reflector.get(METHOD_METADATA, context.getHandler());
+    const appropriateResponseStatus = {
+      [RequestMethod.GET]: HttpStatus.OK,
+      [RequestMethod.POST]: HttpStatus.CREATED,
+      [RequestMethod.PATCH]: HttpStatus.CREATED,
+      [RequestMethod.PUT]: HttpStatus.OK,
+      [RequestMethod.DELETE]: HttpStatus.OK,
+    };
     return next.handle().pipe(
       map((Data: T) => {
         return {
           Success: true,
           Data,
-          Status: HttpStatus.OK,
+          Status: httpCode ?? appropriateResponseStatus[method],
           ErrorMessages: [],
         };
       }),
