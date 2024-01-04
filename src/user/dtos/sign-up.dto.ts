@@ -1,14 +1,20 @@
 import {
+  ArrayNotEmpty,
   IsAlpha,
+  IsArray,
   IsEmail,
+  IsIn,
   IsNotEmpty,
+  IsString,
   IsStrongPassword,
   MaxLength,
   MinLength,
 } from 'class-validator';
+import { PossibleRoles } from '../../constants/default.constants';
 
-export class CreateUserDto {
-  @IsEmail()
+export class SignUpDto {
+  @IsEmail({}, { message: 'Please provide valid Email' })
+  @IsNotEmpty({ message: 'Please provide Email' })
   email: string;
 
   @IsNotEmpty()
@@ -31,4 +37,10 @@ export class CreateUserDto {
   )
   @IsNotEmpty({ message: 'Please provide password' })
   password: string;
+
+  @IsIn(PossibleRoles, { each: true })
+  @IsString({ each: true })
+  @ArrayNotEmpty({ message: 'No role provided' })
+  @IsArray({ message: 'Roles should be an array.' })
+  roles: string[] = ['employee'];
 }

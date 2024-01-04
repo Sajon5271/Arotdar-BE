@@ -49,7 +49,6 @@ export class GenericInterceptor<T>
         };
       }),
       catchError((err) => {
-        console.error(err);
         return throwError(() => {
           let message: string | string[] = 'Internal Server Error';
           let status = 500;
