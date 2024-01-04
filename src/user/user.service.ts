@@ -14,7 +14,7 @@ export class UserService {
 
   async createUser(email: string, name: string, password: string) {
     try {
-      const existingUser = await this.users.find({ email });
+      const existingUser = await this.users.findOne({ email });
       if (existingUser) throw new Error('User already exists');
       const hasedPassword = await hash(password, BCRYPT_SALT_ROUNDS);
       const newUser = new this.users({ email, name, password: hasedPassword });
