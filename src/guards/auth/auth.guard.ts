@@ -12,14 +12,19 @@ import {
   ANONYMOUS_ROUTE,
   ROLES_DATA,
 } from '../../constants/decorators.constants';
-import { JWTtokenNameInCookie } from '../../constants/default.constants';
+import {
+  CurrentUserKey,
+  JWTtokenNameInCookie,
+} from '../../constants/default.constants';
 import { RoleType } from '../../decorators/roles/roles.decorator';
+import { UserService } from '../../users/user.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
     private jwtService: JwtService,
     private reflector: Reflector,
+    private userService: UserService,
   ) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const anonymouseRoute = this.reflector.getAllAndOverride(ANONYMOUS_ROUTE, [
@@ -31,7 +36,8 @@ export class AuthGuard implements CanActivate {
       ROLES_DATA,
       [context.getHandler(), context.getClass()],
     );
-    const session = context.switchToHttp().getRequest().session;
+    const currentRequestObj = context.switchToHttp().getRequest();
+    const session = currentRequestObj.session;
     if (!session || !session[JWTtokenNameInCookie]) {
       throw new ForbiddenException('No token provided');
     }
@@ -46,9 +52,11 @@ export class AuthGuard implements CanActivate {
     }
     if (!jwtPayload) throw new BadRequestException('Malformed token');
 
-    if (!requiredRoles.some((el) => jwtPayload.roles.includes(el))) {
+    if (!requiredRoles?.some((el) => jwtPayload.roles.includes(el))) {
       throw new UnauthorizedException('You are not authorized');
     }
+    const currentUser = await this.userService.getLoggedInUser(jwtPayload.sub);
+    currentRequestObj[CurrentUserKey] = currentUser;
     return true;
   }
 }

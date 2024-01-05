@@ -14,7 +14,10 @@ import { User } from '../schemas/user.schema';
 import { SignInDto } from './dtos/sign-in.dto';
 import { SignUpDto } from './dtos/sign-up.dto';
 import { TransformResponseInterceptor } from './interceptors/transform-response.interceptor';
-import { UserService } from './user.service';
+import { UserService } from '../users/user.service';
+import { Roles } from '../decorators/roles/roles.decorator';
+import { CurrentUser } from './decorators/CurrentUser.decorator';
+import { PublicUserProperties } from '../users/public-user-properties';
 
 @Controller('auth')
 @AnonymousRoute()
@@ -51,6 +54,7 @@ export class AuthController {
       sub: newUser._id,
       roles: newUser.roles,
     });
+
     cookie[JWTtokenNameInCookie] = jwtToken;
     return null;
   }

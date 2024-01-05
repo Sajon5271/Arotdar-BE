@@ -4,11 +4,13 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { User } from '../schemas/user.schema';
-import { hash, compare } from 'bcrypt';
+import { compare, hash } from 'bcrypt';
+import { Model } from 'mongoose';
 import { BCRYPT_SALT_ROUNDS } from '../constants/default.constants';
+import { User } from '../schemas/user.schema';
+import { plainToClass } from 'class-transformer';
+import { PublicUserProperties } from './public-user-properties';
 
 @Injectable()
 export class UserService {
@@ -42,5 +44,13 @@ export class UserService {
     if (!correctPassword)
       throw new UnauthorizedException('Username or Password wrong');
     return existingUser;
+  }
+
+  async getLoggedInUser(id: string): Promise<PublicUserProperties> {
+    const currentUser = await this.users.findById(id);
+    if (!currentUser) throw new UnauthorizedException('Invalid user');
+    return plainToClass(PublicUserProperties, currentUser, {
+      excludeExtraneousValues: true,
+    });
   }
 }
