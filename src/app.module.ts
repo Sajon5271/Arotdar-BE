@@ -1,17 +1,26 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UserModule } from './user/auth.module';
-import { APP_INTERCEPTOR } from '@nestjs/core';
+import { AuthGuard } from './guards/auth/auth.guard';
 import { GenericInterceptor } from './interceptors/generic.interceptor';
+import { AuthModule } from './user/auth.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     MongooseModule.forRoot(process.env.DATABASE_URL || ''),
-    UserModule,
+    JwtModule.register({
+      global: true,
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: '7 days' },
+    }),
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [
@@ -19,6 +28,10 @@ import { GenericInterceptor } from './interceptors/generic.interceptor';
     {
       provide: APP_INTERCEPTOR,
       useClass: GenericInterceptor,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
     },
   ],
 })
