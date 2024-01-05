@@ -9,24 +9,35 @@ import {
 } from '@nestjs/common';
 import { HTTP_CODE_METADATA, METHOD_METADATA } from '@nestjs/common/constants';
 import { Reflector } from '@nestjs/core';
+import { ApiProperty } from '@nestjs/swagger';
 import { Observable, catchError, map, throwError } from 'rxjs';
 
-export interface GenericResponse<T> {
+export interface GenericResponseInterface<T> {
   Success: boolean;
   Data: T | null;
   Status: number;
   ErrorMessages: string[];
 }
 
+export class GenericResponseClass<T> implements GenericResponseInterface<T> {
+  @ApiProperty()
+  Success: boolean;
+  Data: T;
+  @ApiProperty()
+  Status: number;
+  @ApiProperty()
+  ErrorMessages: string[];
+}
+
 @Injectable()
 export class GenericInterceptor<T>
-  implements NestInterceptor<T, GenericResponse<T>>
+  implements NestInterceptor<T, GenericResponseInterface<T>>
 {
   constructor(private reflector: Reflector) {}
   intercept(
     context: ExecutionContext,
     next: CallHandler,
-  ): Observable<GenericResponse<T>> {
+  ): Observable<GenericResponseInterface<T>> {
     const httpCode = this.reflector.get(
       HTTP_CODE_METADATA,
       context.getHandler(),

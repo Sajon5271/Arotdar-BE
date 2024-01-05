@@ -24,7 +24,6 @@ import { UsersModule } from './users/users.module';
     UsersModule,
     AuthModule,
   ],
-  controllers: [AppController],
   providers: [
     AppService,
     {

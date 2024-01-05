@@ -11,16 +11,19 @@ import {
   MinLength,
 } from 'class-validator';
 import { PossibleRoles } from '../../constants/default.constants';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class SignUpDto {
   @IsEmail({}, { message: 'Please provide valid Email' })
   @IsNotEmpty({ message: 'Please provide Email' })
+  @ApiProperty()
   email: string;
 
   @IsNotEmpty()
   @IsAlpha()
   @MinLength(2)
   @MaxLength(50)
+  @ApiProperty()
   name: string;
 
   @MaxLength(50)
@@ -36,11 +39,13 @@ export class SignUpDto {
     { message: 'Weak password' },
   )
   @IsNotEmpty({ message: 'Please provide password' })
+  @ApiProperty()
   password: string;
 
   @IsIn(PossibleRoles, { each: true })
   @IsString({ each: true })
   @ArrayNotEmpty({ message: 'No role provided' })
   @IsArray({ message: 'Roles should be an array.' })
+  @ApiProperty({ default: ['employee'], type: [String] })
   roles: string[] = ['employee'];
 }

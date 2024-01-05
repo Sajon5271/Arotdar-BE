@@ -8,17 +8,20 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { ApiTags } from '@nestjs/swagger';
 import { JWTtokenNameInCookie } from '../constants/default.constants';
 import { AnonymousRoute } from '../decorators/anonymous-route/anonymous-route.decorator';
 import { User } from '../schemas/user.schema';
+import {
+  GenericNullResponse,
+  GenericObjectResponse,
+} from '../swagger/GenericResponseDecorator';
+import { UserService } from '../users/user.service';
 import { SignInDto } from './dtos/sign-in.dto';
 import { SignUpDto } from './dtos/sign-up.dto';
 import { TransformResponseInterceptor } from './interceptors/transform-response.interceptor';
-import { UserService } from '../users/user.service';
-import { Roles } from '../decorators/roles/roles.decorator';
-import { CurrentUser } from './decorators/CurrentUser.decorator';
-import { PublicUserProperties } from '../users/public-user-properties';
 
+@ApiTags('Authentication')
 @Controller('auth')
 @AnonymousRoute()
 export class AuthController {
@@ -29,6 +32,7 @@ export class AuthController {
 
   @UseInterceptors(TransformResponseInterceptor)
   @Post('signup')
+  @GenericObjectResponse(User)
   async signUp(@Body() userData: SignUpDto): Promise<User> {
     const newUser = await this.userService.createUser(
       userData.email,
@@ -41,6 +45,7 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @Post('signin')
+  @GenericNullResponse()
   async signIn(
     @Body() loginData: SignInDto,
     @Session() cookie: Record<string, any>,
@@ -61,6 +66,7 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @Post('signout')
+  @GenericNullResponse()
   signOut(@Session() cookie: Record<string, any>) {
     cookie[JWTtokenNameInCookie] = null;
     return null;
