@@ -1,5 +1,5 @@
 import { ExecutionContext, createParamDecorator } from '@nestjs/common';
-import { CurrentUserKey } from '../../constants/default.constants';
+import { CurrentUserKey } from '../constants/default.constants';
 
 export const CurrentUser = createParamDecorator(
   (data: never, context: ExecutionContext) => {

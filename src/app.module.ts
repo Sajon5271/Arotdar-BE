@@ -7,7 +7,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthGuard } from './guards/auth/auth.guard';
 import { GenericInterceptor } from './interceptors/generic.interceptor';
-import { AuthModule } from './user/auth.module';
+import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 
 @Module({
