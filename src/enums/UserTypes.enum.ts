@@ -1,6 +1,4 @@
-export enum UserType {
-  Admin,
-  Employee,
+export enum PartnerType {
   Supplier,
   Customer,
 }

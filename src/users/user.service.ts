@@ -15,6 +15,7 @@ import { PublicUserProperties } from './public-user-properties';
 @Injectable()
 export class UserService {
   constructor(@InjectModel(User.name) private readonly users: Model<User>) {}
+
   async getAll(): Promise<User[]> {
     return await this.users.find({});
   }

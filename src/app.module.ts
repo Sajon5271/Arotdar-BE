@@ -3,12 +3,12 @@ import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
-import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { AuthModule } from './auth/auth.module';
 import { AuthGuard } from './guards/auth/auth.guard';
 import { GenericInterceptor } from './interceptors/generic.interceptor';
-import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
+import { TradingPartnersModule } from './trading-partners/trading-partners.module';
 
 @Module({
   imports: [
@@ -23,6 +23,7 @@ import { UsersModule } from './users/users.module';
     }),
     UsersModule,
     AuthModule,
+    TradingPartnersModule,
   ],
   providers: [
     AppService,

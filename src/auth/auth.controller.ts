@@ -5,21 +5,21 @@ import {
   HttpStatus,
   Post,
   Session,
-  UseInterceptors,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ApiTags } from '@nestjs/swagger';
 import { JWTtokenNameInCookie } from '../constants/default.constants';
 import { AnonymousRoute } from '../decorators/anonymous-route/anonymous-route.decorator';
+import { ValidateOutgoing } from '../interceptors/transform-response.interceptor';
 import { User } from '../schemas/user.schema';
 import {
   GenericNullResponse,
   GenericObjectResponse,
 } from '../swagger/GenericResponseDecorator';
+import { PublicUserProperties } from '../users/public-user-properties';
 import { UserService } from '../users/user.service';
 import { SignInDto } from './dtos/sign-in.dto';
 import { SignUpDto } from './dtos/sign-up.dto';
-import { TransformResponseInterceptor } from './interceptors/transform-response.interceptor';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -30,7 +30,7 @@ export class AuthController {
     private jwtService: JwtService,
   ) {}
 
-  @UseInterceptors(TransformResponseInterceptor)
+  @ValidateOutgoing(PublicUserProperties)
   @Post('signup')
   @GenericObjectResponse(User)
   async signUp(@Body() userData: SignUpDto): Promise<User> {

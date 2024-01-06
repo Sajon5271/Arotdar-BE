@@ -1,6 +1,6 @@
 import { Controller, Get, UseInterceptors } from '@nestjs/common';
 import { User } from '../schemas/user.schema';
-import { TransformResponseInterceptor } from '../auth/interceptors/transform-response.interceptor';
+import { TransformResponseInterceptor } from '../interceptors/transform-response.interceptor';
 import { UserService } from './user.service';
 import { ApiExcludeController } from '@nestjs/swagger';
 
