@@ -41,6 +41,7 @@ export class TradingPartnersController {
     return this.tradingPartnersService.addPartner(partnerDetails);
   }
 
+  // @Delete(['remove/:id', '/remove'])
   @Delete('remove/:id')
   @GenericNullResponse()
   @Roles(['admin'])

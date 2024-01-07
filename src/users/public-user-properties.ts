@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Expose, Transform } from 'class-transformer';
 
 export class PublicUserProperties {
@@ -18,4 +18,12 @@ export class PublicUserProperties {
   @Expose()
   @ApiProperty()
   roles: string[];
+
+  @Expose()
+  @ApiPropertyOptional()
+  createdAt?: Date;
+
+  @Expose()
+  @ApiPropertyOptional()
+  updatedAt?: Date;
 }

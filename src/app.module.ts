@@ -9,6 +9,8 @@ import { AuthGuard } from './guards/auth/auth.guard';
 import { GenericInterceptor } from './interceptors/generic.interceptor';
 import { UsersModule } from './users/users.module';
 import { TradingPartnersModule } from './trading-partners/trading-partners.module';
+import { InventoryModule } from './inventory/inventory.module';
+import { InventoryLogsService } from './inventory/inventory-logs.service';
 
 @Module({
   imports: [
@@ -24,6 +26,7 @@ import { TradingPartnersModule } from './trading-partners/trading-partners.modul
     UsersModule,
     AuthModule,
     TradingPartnersModule,
+    InventoryModule,
   ],
   providers: [
     AppService,

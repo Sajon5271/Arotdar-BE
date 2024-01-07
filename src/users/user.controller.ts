@@ -5,7 +5,7 @@ import {
   Param,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiCookieAuth, ApiTags } from '@nestjs/swagger';
 import {
   TransformResponseInterceptor,
   ValidateOutgoing,
@@ -25,6 +25,7 @@ import { CurrentUser } from '../decorators/CurrentUser.decorator';
 @ValidateOutgoing(PublicUserProperties)
 @Controller('user')
 @ApiTags('User management for Super Admin')
+@ApiCookieAuth()
 @Roles(['superadmin'])
 export class UserController {
   constructor(private userService: UserService) {}
