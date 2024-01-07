@@ -1,4 +1,10 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+// import { PartialType } from '@nestjs/mapped-types';
+import {
+  ApiProperty,
+  ApiPropertyOptional,
+  PartialType,
+  PickType,
+} from '@nestjs/swagger';
 import {
   IsInt,
   IsNotEmpty,
@@ -29,3 +35,9 @@ export class ProductDto {
   @IsNumber({}, { message: 'Price must be a number' })
   currentPricePerUnit: number;
 }
+
+export class UpdateProductDto extends PartialType(ProductDto) {}
+
+export class UpdatePriceDto extends PickType(ProductDto, [
+  'currentPricePerUnit',
+]) {}

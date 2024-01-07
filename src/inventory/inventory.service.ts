@@ -1,21 +1,20 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Inventory } from '../schemas/inventory.schema';
-import { Model, SortOrder } from 'mongoose';
-import { InventoryLogs } from '../schemas/inventory-logs.schema';
+import { Model } from 'mongoose';
 import { TransactionType } from '../enums/Transaction.enum';
+import { Inventory } from '../schemas/inventory.schema';
+import { InventoryLogsService } from './inventory-logs.service';
 
 @Injectable()
 export class InventoryService {
   constructor(
     @InjectModel(Inventory.name) private inventory: Model<Inventory>,
-    @InjectModel(InventoryLogs.name)
-    private inventoryLogs: Model<InventoryLogs>,
+    private inventoryLogsService: InventoryLogsService,
   ) {}
 
   async addNewProduct(product: Inventory): Promise<Inventory> {
     const newProduct = await this.inventory.create(product);
-    await this.inventoryLogs.create({
+    await this.inventoryLogsService.createNewLog({
       productId: newProduct._id,
       productName: product.productName,
       transactionType: TransactionType.Buy,
@@ -24,6 +23,10 @@ export class InventoryService {
       pricePerUnit: product.currentPricePerUnit,
     });
     return newProduct;
+  }
+
+  async getAllProduct(): Promise<Inventory[]> {
+    return this.inventory.find({});
   }
 
   async updateProduct(
@@ -45,33 +48,27 @@ export class InventoryService {
   async updateQuantity(
     id: string,
     quantity: number,
-    isASell: boolean,
+    isSelling: boolean,
   ): Promise<Inventory> {
     const product = await this.inventory.findById(id);
     if (!product) throw new NotFoundException('Product not found');
-    await this.inventoryLogs.create({
+    await this.inventoryLogsService.createNewLog({
       productId: product._id,
       productName: product.productName,
-      transactionType: isASell ? TransactionType.Sell : TransactionType.Buy,
+      transactionType: isSelling ? TransactionType.Sell : TransactionType.Buy,
       quantityTraded: quantity,
-      totalQuantity: isASell
+      totalQuantity: isSelling
         ? product.quantity - quantity
         : product.quantity + quantity,
       pricePerUnit: product.currentPricePerUnit,
     });
-    return product;
+    product.quantity = isSelling
+      ? product.quantity - quantity
+      : product.quantity + quantity;
+    return await product.save();
   }
 
   async updatePrice(id: string, newPrice: number): Promise<Inventory> {
     return await this.updateProduct(id, { currentPricePerUnit: newPrice });
-  }
-
-  async getLogsForProduct(
-    productId: string,
-    sortOrder: SortOrder = 'asc',
-  ): Promise<InventoryLogs[]> {
-    return await this.inventoryLogs
-      .find({ productId })
-      .sort({ createdAt: sortOrder });
   }
 }

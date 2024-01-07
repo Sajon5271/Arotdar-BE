@@ -1,26 +1,17 @@
-import {
-  Controller,
-  Delete,
-  Get,
-  Param,
-  UseInterceptors,
-} from '@nestjs/common';
+import { Controller, Delete, Get, Param } from '@nestjs/common';
 import { ApiCookieAuth, ApiTags } from '@nestjs/swagger';
-import {
-  TransformResponseInterceptor,
-  ValidateOutgoing,
-} from '../interceptors/transform-response.interceptor';
+import { CurrentUser } from '../decorators/CurrentUser.decorator';
+import { Roles } from '../decorators/roles/roles.decorator';
+import { ValidateOutgoing } from '../interceptors/transform-response.interceptor';
 import { User } from '../schemas/user.schema';
-import { UserService } from './user.service';
+import { ParamDto } from '../shared/dtos/param.dto';
 import {
   GenericArrayResponse,
   GenericNullResponse,
   GenericObjectResponse,
 } from '../swagger/GenericResponseDecorator';
 import { PublicUserProperties } from './public-user-properties';
-import { ParamDto } from '../shared/dtos/param.dto';
-import { Roles } from '../decorators/roles/roles.decorator';
-import { CurrentUser } from '../decorators/CurrentUser.decorator';
+import { UserService } from './user.service';
 
 @ValidateOutgoing(PublicUserProperties)
 @Controller('user')
@@ -30,7 +21,7 @@ import { CurrentUser } from '../decorators/CurrentUser.decorator';
 export class UserController {
   constructor(private userService: UserService) {}
 
-  @Get('all')
+  @Get('all-users')
   @GenericArrayResponse(PublicUserProperties)
   async getAllUser(): Promise<User[]> {
     const allUsers = await this.userService.getAll();
