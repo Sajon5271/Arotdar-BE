@@ -4,7 +4,7 @@ import {
   NestInterceptor,
   UseInterceptors,
 } from '@nestjs/common';
-import { plainToClass } from 'class-transformer';
+import { plainToClass, plainToInstance } from 'class-transformer';
 import { Observable, map } from 'rxjs';
 
 interface ClassConstructor {
@@ -19,7 +19,7 @@ export class TransformResponseInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     return next.handle().pipe(
       map((data) => {
-        return plainToClass(this.transformeTo, data, {
+        return plainToInstance(this.transformeTo, data, {
           excludeExtraneousValues: true,
         });
       }),

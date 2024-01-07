@@ -1,7 +1,7 @@
 import { IsMongoId, IsNotEmpty } from 'class-validator';
 
 export class ParamDto {
-  @IsMongoId()
+  @IsMongoId({ message: 'Invalid Id' })
   @IsNotEmpty()
   id: string;
 }

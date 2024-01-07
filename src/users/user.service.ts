@@ -54,4 +54,12 @@ export class UserService {
       excludeExtraneousValues: true,
     });
   }
+  async deleteUser(id: string): Promise<null> {
+    try {
+      await this.users.findByIdAndDelete(id);
+    } catch (err) {
+      console.log(err);
+    }
+    return null;
+  }
 }

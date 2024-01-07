@@ -16,7 +16,7 @@ import {
   GenericNullResponse,
   GenericObjectResponse,
 } from '../swagger/GenericResponseDecorator';
-import { ParamDto } from './dtos/param.dto';
+import { ParamDto } from '../shared/dtos/param.dto';
 import { PartnerDetailsDto } from './dtos/partner-details.dto';
 import { TradingPartnersService } from './trading-partners.service';
 
