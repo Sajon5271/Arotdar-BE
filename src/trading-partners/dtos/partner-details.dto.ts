@@ -20,8 +20,8 @@ export class PartnerDetailsDto {
   email?: string;
 
   @IsEnum(PartnerType, { message: 'Wrong type' })
-  @ApiProperty()
-  type: number;
+  @ApiProperty({ enum: PartnerType })
+  type: PartnerType;
 
   @IsString()
   @IsOptional()

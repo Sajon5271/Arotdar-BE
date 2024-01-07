@@ -23,9 +23,9 @@ export class TradingPartner {
   email?: string;
 
   @Prop({ required: true, type: Number })
-  @ApiProperty()
+  @ApiProperty({ enum: PartnerType })
   @Expose()
-  type: number;
+  type: PartnerType;
 
   @Prop()
   @ApiPropertyOptional()
