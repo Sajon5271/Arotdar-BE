@@ -10,6 +10,7 @@ import {
 } from '../swagger/GenericResponseDecorator';
 import { PartnerDetailsDto } from './dtos/partner-details.dto';
 import { TradingPartnersService } from './trading-partners.service';
+import { PartnerType } from '../enums/UserTypes.enum';
 
 @ApiTags('Trading Partners info')
 @ApiCookieAuth()
@@ -22,6 +23,20 @@ export class TradingPartnersController {
   @Roles(['admin', 'employee'])
   getAll() {
     return this.tradingPartnersService.getAll();
+  }
+
+  @Get('customers')
+  @GenericArrayResponse(TradingPartner)
+  @Roles(['admin', 'employee'])
+  getAllCustomers() {
+    return this.tradingPartnersService.getType(PartnerType.Customer);
+  }
+
+  @Get('suppliers')
+  @GenericArrayResponse(TradingPartner)
+  @Roles(['admin'])
+  getAllSuppliers() {
+    return this.tradingPartnersService.getType(PartnerType.Supplier);
   }
 
   @Post('add-partner')

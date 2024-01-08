@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, SortOrder } from 'mongoose';
-import { InventoryLogs } from '../schemas/inventory-logs.schema';
+import {
+  InventoryLogType,
+  InventoryLogs,
+} from '../schemas/inventory-logs.schema';
 
 @Injectable()
 export class InventoryLogsService {
@@ -14,18 +17,24 @@ export class InventoryLogsService {
     return await this.inventoryLogs.create(log);
   }
 
+  // For now, just returning the quantity update logs
   async getLogsForAllProduct(
     sortOrder: SortOrder = 'asc',
   ): Promise<InventoryLogs[]> {
-    return await this.inventoryLogs.find({}).sort({ createdAt: sortOrder });
+    return await this.inventoryLogs
+      .find({ logType: InventoryLogType.QuantityUpdate })
+      .sort({ createdAt: sortOrder })
+      .select({ logType: -1 });
   }
 
+  // For now, just returning the quantity update logs
   async getLogsForProduct(
     productId: string,
     sortOrder: SortOrder = 'asc',
   ): Promise<InventoryLogs[]> {
     return await this.inventoryLogs
-      .find({ productId })
-      .sort({ createdAt: sortOrder });
+      .find({ productId, logType: InventoryLogType.QuantityUpdate })
+      .sort({ createdAt: sortOrder })
+      .select({ logType: -1 });
   }
 }

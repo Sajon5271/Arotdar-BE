@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 import { TransactionType } from '../enums/Transaction.enum';
 import { Inventory } from '../schemas/inventory.schema';
 import { InventoryLogsService } from './inventory-logs.service';
+import { InventoryLogType } from '../schemas/inventory-logs.schema';
 
 @Injectable()
 export class InventoryService {
@@ -21,6 +22,7 @@ export class InventoryService {
       quantityTraded: product.quantity,
       totalQuantity: product.quantity,
       pricePerUnit: product.currentPricePerUnit,
+      logType: InventoryLogType.Creation,
     });
     return newProduct;
   }
@@ -34,12 +36,34 @@ export class InventoryService {
     updatedValues: Partial<Inventory>,
   ): Promise<Inventory> {
     try {
-      const updatedProduct = await this.inventory.findByIdAndUpdate(
-        id,
-        updatedValues,
-      );
-      if (!updatedProduct) throw new Error();
-      return updatedProduct;
+      const product = await this.inventory.findById(id);
+      const isSelling =
+        updatedValues.quantity && updatedValues.quantity < product.quantity;
+      await this.inventoryLogsService.createNewLog({
+        productId: product._id,
+        productName: product.productName,
+        transactionType: isSelling ? TransactionType.Sell : TransactionType.Buy,
+        quantityTraded: Math.abs(
+          updatedValues.quantity || 0 - product.quantity,
+        ),
+        totalQuantity: isSelling
+          ? product.quantity - updatedValues.quantity
+          : product.quantity + updatedValues.quantity,
+        pricePerUnit: product.currentPricePerUnit,
+        logType:
+          updatedValues.quantity && product.quantity !== updatedValues.quantity
+            ? InventoryLogType.QuantityUpdate
+            : updatedValues.currentPricePerUnit &&
+                product.currentPricePerUnit !==
+                  updatedValues.currentPricePerUnit
+              ? InventoryLogType.PriceUpdate
+              : InventoryLogType.GeneralUpdate,
+      });
+      if (!product) throw new Error();
+      for (const key in Object.keys(updatedValues)) {
+        product[key] = updatedValues[key];
+      }
+      return await product.save();
     } catch (err) {
       throw new NotFoundException('Could not find Product');
     }
@@ -61,6 +85,7 @@ export class InventoryService {
         ? product.quantity - quantity
         : product.quantity + quantity,
       pricePerUnit: product.currentPricePerUnit,
+      logType: InventoryLogType.QuantityUpdate,
     });
     product.quantity = isSelling
       ? product.quantity - quantity

@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { TradingPartner } from '../schemas/trading-partners.schema';
 import { Model } from 'mongoose';
+import { PartnerType } from '../enums/UserTypes.enum';
 
 @Injectable()
 export class TradingPartnersService {
@@ -12,6 +13,10 @@ export class TradingPartnersService {
 
   async getAll(): Promise<TradingPartner[]> {
     return await this.tradingPartners.find({});
+  }
+
+  async getType(type: PartnerType): Promise<TradingPartner[]> {
+    return await this.tradingPartners.find({ type });
   }
 
   async addPartner(partnerDetails: TradingPartner) {

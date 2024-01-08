@@ -3,6 +3,13 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { HydratedDocument } from 'mongoose';
 import { TransactionType } from '../enums/Transaction.enum';
 
+export enum InventoryLogType {
+  Creation,
+  QuantityUpdate,
+  PriceUpdate,
+  GeneralUpdate,
+}
+
 export type InventoryLogsModel = HydratedDocument<InventoryLogs>;
 
 @Schema({ timestamps: true })
@@ -33,6 +40,9 @@ export class InventoryLogs {
   @ApiProperty()
   @Prop({ required: true })
   pricePerUnit: number;
+
+  @Prop({ required: true, default: InventoryLogType.GeneralUpdate })
+  logType: InventoryLogType;
 
   @ApiPropertyOptional()
   createdAt?: Date;
