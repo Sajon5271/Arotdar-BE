@@ -7,10 +7,10 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { AuthGuard } from './guards/auth/auth.guard';
 import { GenericInterceptor } from './interceptors/generic.interceptor';
-import { UsersModule } from './users/users.module';
-import { TradingPartnersModule } from './trading-partners/trading-partners.module';
 import { InventoryModule } from './inventory/inventory.module';
-import { InventoryLogsService } from './inventory/inventory-logs.service';
+import { TradingPartnersModule } from './trading-partners/trading-partners.module';
+import { TransactionLogsModule } from './transaction-logs/transaction-logs.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -27,6 +27,7 @@ import { InventoryLogsService } from './inventory/inventory-logs.service';
     AuthModule,
     TradingPartnersModule,
     InventoryModule,
+    TransactionLogsModule,
   ],
   providers: [
     AppService,

@@ -2,9 +2,9 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { TransactionType } from '../enums/Transaction.enum';
+import { InventoryLogType } from '../schemas/inventory-logs.schema';
 import { Inventory } from '../schemas/inventory.schema';
 import { InventoryLogsService } from './inventory-logs.service';
-import { InventoryLogType } from '../schemas/inventory-logs.schema';
 
 @Injectable()
 export class InventoryService {
