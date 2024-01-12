@@ -39,16 +39,6 @@ export class TransactionLogsController {
     return this.transactionLogsService.getAllOfType(TransactionType.Buy);
   }
 
-  @Get('update-dues')
-  @GenericObjectResponse(TransactionLogs)
-  @Roles(['admin'])
-  updateDueAmount(
-    @Body() data: UpdateDueOfPartners,
-    @CurrentUser() user: PublicUserProperties,
-  ) {
-    return this.transactionLogsService.addDueUpdateTransaction(data, user._id);
-  }
-
   @Post('add-new')
   @GenericObjectResponse(TransactionLogs)
   @Roles(['admin', 'employee'])
@@ -60,5 +50,15 @@ export class TransactionLogsController {
       transactionInfo,
       user._id,
     );
+  }
+
+  @Post('update-dues')
+  @GenericObjectResponse(TransactionLogs)
+  @Roles(['admin'])
+  updateDueAmount(
+    @Body() data: UpdateDueOfPartners,
+    @CurrentUser() user: PublicUserProperties,
+  ) {
+    return this.transactionLogsService.addDueUpdateTransaction(data, user._id);
   }
 }
