@@ -35,7 +35,8 @@ export class UserService {
       password: hasedPassword,
       roles,
     });
-    return await newUser.save();
+    await newUser.save();
+    return newUser;
   }
 
   async checkCredintials(email: string, password: string): Promise<User> {

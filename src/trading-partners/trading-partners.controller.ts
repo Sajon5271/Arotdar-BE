@@ -11,6 +11,7 @@ import {
 import { PartnerDetailsDto } from './dtos/partner-details.dto';
 import { TradingPartnersService } from './trading-partners.service';
 import { PartnerType } from '../enums/UserTypes.enum';
+import { UpdateDueOfPartners } from '../transaction-logs/dtos/update-due-amount.dto';
 
 @ApiTags('Trading Partners info')
 @ApiCookieAuth()

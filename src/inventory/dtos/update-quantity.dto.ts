@@ -1,10 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsInt } from 'class-validator';
+import { IsBoolean, IsNumber } from 'class-validator';
 
 export class UpdateQuantityDto {
   @ApiProperty()
   // @Min(0)
-  @IsInt({ message: 'Quantity must be a whole number' })
+  @IsNumber({}, { message: 'Quantity must be a number' })
   quantity: number;
 
   @ApiProperty()

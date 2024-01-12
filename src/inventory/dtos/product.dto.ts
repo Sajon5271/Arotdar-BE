@@ -6,7 +6,6 @@ import {
   PickType,
 } from '@nestjs/swagger';
 import {
-  IsInt,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -27,7 +26,7 @@ export class ProductDto {
 
   @ApiProperty()
   // @Min(0)
-  @IsInt({ message: 'Quantity must be a whole number' })
+  @IsNumber({}, { message: 'Quantity must be a number' })
   quantity: number;
 
   @ApiProperty()

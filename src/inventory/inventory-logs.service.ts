@@ -10,7 +10,7 @@ import {
 export class InventoryLogsService {
   constructor(
     @InjectModel(InventoryLogs.name)
-    private inventoryLogs: Model<InventoryLogs>,
+    private readonly inventoryLogs: Model<InventoryLogs>,
   ) {}
 
   async createNewLog(log: InventoryLogs): Promise<InventoryLogs> {

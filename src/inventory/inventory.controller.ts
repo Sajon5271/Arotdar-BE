@@ -16,6 +16,9 @@ import {
 import { UpdateQuantityDto } from './dtos/update-quantity.dto';
 import { InventoryLogsService } from './inventory-logs.service';
 import { InventoryService } from './inventory.service';
+import { CurrentUser } from '../decorators/CurrentUser.decorator';
+import { User } from '../schemas/user.schema';
+import { PublicUserProperties } from '../users/public-user-properties';
 
 @ApiTags('Inventory Management')
 @ApiCookieAuth()
@@ -29,8 +32,11 @@ export class InventoryController {
 
   @Post('add-product')
   @GenericObjectResponse(Inventory)
-  addNewProduct(@Body() productInfo: ProductDto) {
-    return this.inventoryService.addNewProduct(productInfo);
+  addNewProduct(
+    @Body() productInfo: ProductDto,
+    @CurrentUser() user: PublicUserProperties,
+  ) {
+    return this.inventoryService.addNewProduct(productInfo, user._id);
   }
 
   @Get('all-products')
@@ -42,26 +48,40 @@ export class InventoryController {
   @Post('update-product/:id')
   @Roles(['superadmin'])
   @GenericObjectResponse(Inventory)
-  updateProduct(@Param() param: ParamDto, @Body() updates: UpdateProductDto) {
-    return this.inventoryService.updateProduct(param.id, updates);
+  updateProduct(
+    @Param() param: ParamDto,
+    @Body() updates: UpdateProductDto,
+    @CurrentUser() user: PublicUserProperties,
+  ) {
+    return this.inventoryService.updateProduct(param.id, updates, user._id);
   }
 
   @Post('update-quantity/:id')
   @GenericObjectResponse(Inventory)
-  updateQuantity(@Param() param: ParamDto, @Body() data: UpdateQuantityDto) {
+  updateQuantity(
+    @Param() param: ParamDto,
+    @Body() data: UpdateQuantityDto,
+    @CurrentUser() user: PublicUserProperties,
+  ) {
     return this.inventoryService.updateQuantity(
       param.id,
       data.quantity,
       data.isSelling,
+      user._id,
     );
   }
 
   @Post('update-price/:id')
   @GenericObjectResponse(Inventory)
-  updatePrice(@Param() param: ParamDto, @Body() data: UpdatePriceDto) {
+  updatePrice(
+    @Param() param: ParamDto,
+    @Body() data: UpdatePriceDto,
+    @CurrentUser() user: PublicUserProperties,
+  ) {
     return this.inventoryService.updatePrice(
       param.id,
       data.currentPricePerUnit,
+      user._id,
     );
   }
 

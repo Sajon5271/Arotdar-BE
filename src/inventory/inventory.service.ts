@@ -9,11 +9,14 @@ import { InventoryLogsService } from './inventory-logs.service';
 @Injectable()
 export class InventoryService {
   constructor(
-    @InjectModel(Inventory.name) private inventory: Model<Inventory>,
+    @InjectModel(Inventory.name) private readonly inventory: Model<Inventory>,
     private inventoryLogsService: InventoryLogsService,
   ) {}
 
-  async addNewProduct(product: Inventory): Promise<Inventory> {
+  async addNewProduct(
+    product: Inventory,
+    updatedBy: string,
+  ): Promise<Inventory> {
     const newProduct = await this.inventory.create(product);
     await this.inventoryLogsService.createNewLog({
       productId: newProduct._id,
@@ -23,6 +26,7 @@ export class InventoryService {
       totalQuantity: product.quantity,
       pricePerUnit: product.currentPricePerUnit,
       logType: InventoryLogType.Creation,
+      updatedBy,
     });
     return newProduct;
   }
@@ -30,10 +34,14 @@ export class InventoryService {
   async getAllProduct(): Promise<Inventory[]> {
     return this.inventory.find({});
   }
+  async getProductById(id: string): Promise<Inventory> {
+    return this.inventory.findById(id);
+  }
 
   async updateProduct(
     id: string,
     updatedValues: Partial<Inventory>,
+    updatedBy: string,
   ): Promise<Inventory> {
     try {
       const product = await this.inventory.findById(id);
@@ -58,12 +66,14 @@ export class InventoryService {
                   updatedValues.currentPricePerUnit
               ? InventoryLogType.PriceUpdate
               : InventoryLogType.GeneralUpdate,
+        updatedBy,
       });
       if (!product) throw new Error();
       for (const key in Object.keys(updatedValues)) {
         product[key] = updatedValues[key];
       }
-      return await product.save();
+      await product.save();
+      return product;
     } catch (err) {
       throw new NotFoundException('Could not find Product');
     }
@@ -73,6 +83,7 @@ export class InventoryService {
     id: string,
     quantity: number,
     isSelling: boolean,
+    updatedBy: string,
   ): Promise<Inventory> {
     const product = await this.inventory.findById(id);
     if (!product) throw new NotFoundException('Product not found');
@@ -86,14 +97,24 @@ export class InventoryService {
         : product.quantity + quantity,
       pricePerUnit: product.currentPricePerUnit,
       logType: InventoryLogType.QuantityUpdate,
+      updatedBy,
     });
     product.quantity = isSelling
       ? product.quantity - quantity
       : product.quantity + quantity;
-    return await product.save();
+    await product.save();
+    return product;
   }
 
-  async updatePrice(id: string, newPrice: number): Promise<Inventory> {
-    return await this.updateProduct(id, { currentPricePerUnit: newPrice });
+  async updatePrice(
+    id: string,
+    newPrice: number,
+    updatedBy: string,
+  ): Promise<Inventory> {
+    return await this.updateProduct(
+      id,
+      { currentPricePerUnit: newPrice },
+      updatedBy,
+    );
   }
 }

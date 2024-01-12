@@ -15,6 +15,6 @@ import { TradingPartnersService } from './trading-partners.service';
   ],
   controllers: [TradingPartnersController],
   providers: [TradingPartnersService],
-  exports: [],
+  exports: [TradingPartnersService],
 })
 export class TradingPartnersModule {}

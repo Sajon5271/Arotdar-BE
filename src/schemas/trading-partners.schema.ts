@@ -26,13 +26,27 @@ export class TradingPartner {
   @ApiPropertyOptional()
   companyName?: string;
 
+  @Prop({ required: true })
+  @ApiProperty()
+  totalCurrentDue: number;
+
+  @Prop({ required: true })
+  @ApiProperty()
+  totalLifetimePaid: number;
+
+  @Prop({ required: true })
+  @ApiProperty()
+  totalCurrentSalesQuantity: number;
+
+  @Prop({ required: true })
+  @ApiProperty()
+  totalTrades: number;
+
   @ApiPropertyOptional()
   createdAt?: Date;
 
   @ApiPropertyOptional()
   updatedAt?: Date;
-  // @ApiProperty()
-  // createdAt: string;
 }
 
 export const TradingPartnerSchema =

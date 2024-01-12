@@ -7,6 +7,7 @@ import {
 } from '../schemas/transaction-logs.schema';
 import { TransactionLogsController } from './transaction-logs.controller';
 import { TransactionLogsService } from './transaction-logs.service';
+import { TradingPartnersModule } from '../trading-partners/trading-partners.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { TransactionLogsService } from './transaction-logs.service';
       { name: TransactionLogs.name, schema: TransactionLogSchema },
     ]),
     InventoryModule,
+    TradingPartnersModule,
   ],
   controllers: [TransactionLogsController],
   providers: [TransactionLogsService],

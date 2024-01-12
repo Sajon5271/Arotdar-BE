@@ -12,12 +12,12 @@ export class TransactionLogs {
   _id?: string;
 
   @ApiProperty()
-  @Prop({ required: true })
-  productId: string;
+  @Prop()
+  productId?: string;
 
   @ApiProperty()
-  @Prop({ required: true })
-  productName: string;
+  @Prop()
+  productName?: string;
 
   @ApiProperty({ enum: TransactionType })
   @Prop({ required: true, type: Number })
@@ -64,6 +64,9 @@ export class TransactionLogs {
 
   @ApiPropertyOptional()
   updatedAt?: Date;
+
+  @Prop({ required: true })
+  updatedBy: string;
 }
 
 export const TransactionLogSchema =

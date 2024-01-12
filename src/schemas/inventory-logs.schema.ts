@@ -49,6 +49,9 @@ export class InventoryLogs {
 
   @ApiPropertyOptional()
   updatedAt?: Date;
+
+  @Prop({ required: true })
+  updatedBy: string;
 }
 
 export const InventoryLogsSchema = SchemaFactory.createForClass(InventoryLogs);
