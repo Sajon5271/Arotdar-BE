@@ -20,7 +20,7 @@ export class SignUpDto {
   email: string;
 
   @IsNotEmpty()
-  @IsAlpha()
+  @IsString()
   @MinLength(2)
   @MaxLength(50)
   @ApiProperty()
