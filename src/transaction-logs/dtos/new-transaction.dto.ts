@@ -55,4 +55,3 @@ export class NewTransactionDto {
   @IsNumber({}, { message: 'Final paid amount must be a number' })
   finalPrice: number;
 }
-
