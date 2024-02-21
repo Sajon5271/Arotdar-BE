@@ -32,29 +32,29 @@ export class TransactionLogsService {
   }
 
   async addNewTransaction(data: NewTransactionDto, updatedBy: string) {
-    const product = await this.inventoryService.updateQuantity(
-      data.productId,
-      data.quantityTraded,
-      data.transactionType === TransactionType.Sell,
-      updatedBy,
-    );
-    const transactionLog: TransactionLogs = {
-      ...data,
-      productName: product.productName,
-      updatedBy,
-    };
-    if (data.partnerId) {
-      const partner =
-        await this.tradingPartnersService.updatePartnerWithNewTransaction(
-          data.partnerId,
-          data.quantityTraded,
-          data.due,
-          data.paid,
-        );
-      transactionLog.partnerName = partner?.name;
-    }
+    // const product = await this.inventoryService.updateQuantity(
+    //   data.productId,
+    //   data.quantityTraded,
+    //   data.transactionType === TransactionType.Sell,
+    //   updatedBy,
+    // );
+    // const transactionLog: TransactionLogs = {
+    //   ...data,
+    //   productName: product.productName,
+    //   updatedBy,
+    // };
+    // if (data.partnerId) {
+    //   const partner =
+    //     await this.tradingPartnersService.updatePartnerWithNewTransaction(
+    //       data.partnerId,
+    //       data.quantityTraded,
+    //       data.due,
+    //       data.paid,
+    //     );
+    //   transactionLog.partnerName = partner?.name;
+    // }
     // this.
-    return await this.transactionLogs.create(transactionLog);
+    // return await this.transactionLogs.create(transactionLog);
   }
 
   async addDueUpdateTransaction(data: UpdateDueOfPartners, updatedBy: string) {
