@@ -52,6 +52,14 @@ export class TransactionLogsController {
     );
   }
 
+  @Post('buy-product')
+  @GenericObjectResponse(TransactionLogs)
+  @Roles(['admin', 'employee'])
+  buyProoduct(
+    @Body() transactionInfo: NewTransactionDto,
+    @CurrentUser() user: PublicUserProperties,
+  ) {}
+
   @Post('update-dues')
   @GenericObjectResponse(TransactionLogs)
   @Roles(['admin'])

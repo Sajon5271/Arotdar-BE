@@ -1,33 +1,30 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { HydratedDocument } from 'mongoose';
+import { Document, HydratedDocument } from 'mongoose';
 
-export type InventoryModel = HydratedDocument<Inventory>;
+export type ProductLotModel = HydratedDocument<ProductLotInfo>;
 
 @Schema({ timestamps: true })
-export class Inventory {
+export class ProductLotInfo extends Document {
   @ApiProperty()
+  @Prop({ required: true })
   _id?: string;
 
   @ApiProperty()
   @Prop({ required: true })
-  productName: string;
-
-  @ApiPropertyOptional()
-  @Prop()
-  productDescription?: string;
+  lotProductId: string;
 
   @ApiProperty()
   @Prop({ required: true })
-  totalCurrentQuantity: number;
-
-  @ApiPropertyOptional()
-  @Prop({ required: true })
-  lotIdsContainingProduct: string[];
+  buyingPrice: number;
 
   @ApiProperty()
   @Prop({ required: true })
-  currentPricePerUnit: number;
+  quantityBought: number;
+
+  @ApiProperty()
+  @Prop({ required: true })
+  quantityRemaining: number;
 
   @ApiPropertyOptional()
   createdAt?: Date;
@@ -36,4 +33,4 @@ export class Inventory {
   updatedAt?: Date;
 }
 
-export const InventorySchema = SchemaFactory.createForClass(Inventory);
+export const ProductLotSchema = SchemaFactory.createForClass(ProductLotInfo);

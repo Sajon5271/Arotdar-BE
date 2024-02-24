@@ -14,20 +14,21 @@ export class InventoryService {
   ) {}
 
   async addNewProduct(
-    product: Inventory,
+    product: Partial<Inventory>,
     updatedBy: string,
   ): Promise<Inventory> {
+    product.lotIdsContainingProduct = [];
     const newProduct = await this.inventory.create(product);
-    await this.inventoryLogsService.createNewLog({
-      productId: newProduct._id,
-      productName: product.productName,
-      transactionType: TransactionType.Buy,
-      quantityTraded: product.quantity,
-      totalQuantity: product.quantity,
-      pricePerUnit: product.currentPricePerUnit,
-      logType: InventoryLogType.Creation,
-      updatedBy,
-    });
+    // await this.inventoryLogsService.createNewLog({
+    //   productId: newProduct._id,
+    //   productName: product.productName,
+    //   transactionType: TransactionType.Buy,
+    //   quantityTraded: product.totalQuantity,
+    //   totalQuantity: product.totalQuantity,
+    //   pricePerUnit: product.currentPricePerUnit,
+    //   logType: InventoryLogType.Creation,
+    //   updatedBy,
+    // });
     return newProduct;
   }
 
