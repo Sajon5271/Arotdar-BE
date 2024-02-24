@@ -1,5 +1,6 @@
-import { Prop, SchemaFactory } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
+@Schema()
 export class TradedProduct {
   @Prop({ required: true })
   productId: string;

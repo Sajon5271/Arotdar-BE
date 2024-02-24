@@ -22,7 +22,7 @@ export class Inventory {
   totalCurrentQuantity: number;
 
   @ApiPropertyOptional()
-  @Prop({ required: true })
+  @Prop({ required: true, default: [] })
   lotIdsContainingProduct: string[];
 
   @ApiProperty()

@@ -42,6 +42,10 @@ export class SellLogs {
 
   @ApiProperty()
   @Prop({ required: true })
+  lotsUsedInTrade: string[];
+
+  @ApiProperty()
+  @Prop({ required: true })
   due: number;
 
   @ApiProperty()

@@ -36,7 +36,7 @@ export class InventoryController {
     @Body() productInfo: ProductDto,
     @CurrentUser() user: PublicUserProperties,
   ) {
-    return this.inventoryService.addNewProduct(productInfo, user._id);
+    return this.inventoryService.addNewProduct(productInfo);
   }
 
   @Get('all-products')
@@ -53,7 +53,7 @@ export class InventoryController {
     @Body() updates: UpdateProductDto,
     @CurrentUser() user: PublicUserProperties,
   ) {
-    return this.inventoryService.updateProduct(param.id, updates, user._id);
+    return this.inventoryService.updateProduct(param.id, updates);
   }
 
   @Post('update-quantity/:id')
@@ -67,7 +67,6 @@ export class InventoryController {
       param.id,
       data.quantity,
       data.isSelling,
-      user._id,
     );
   }
 
@@ -81,7 +80,6 @@ export class InventoryController {
     return this.inventoryService.updatePrice(
       param.id,
       data.currentPricePerUnit,
-      user._id,
     );
   }
 

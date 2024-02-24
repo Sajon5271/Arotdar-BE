@@ -29,7 +29,7 @@ export class BuyLogs {
   products: TradedProduct[];
 
   @ApiProperty()
-  @Prop()
+  @Prop({ required: true })
   partnerId: string;
 
   @ApiProperty()
@@ -47,6 +47,10 @@ export class BuyLogs {
   @ApiProperty()
   @Prop({ required: true })
   finalPrice: number;
+
+  @ApiProperty()
+  @Prop({ required: true })
+  affectedLotIds: string[];
 
   @ApiPropertyOptional()
   createdAt?: Date;
