@@ -35,4 +35,15 @@ export class BuyService {
       updatedBy: userId,
     });
   }
+
+  async getAll() {
+    return this.buyLogs.find({}).sort('-createdAt');
+  }
+
+  async getById(transactionId: string) {
+    return this.buyLogs.findById(transactionId);
+  }
+  async getForPartner(partnerId: string) {
+    return this.buyLogs.find({ partnerId }).sort('-createdAt');
+  }
 }

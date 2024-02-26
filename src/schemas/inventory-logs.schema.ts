@@ -45,7 +45,7 @@ export class InventoryLogs {
   logType: InventoryLogType;
 
   @ApiPropertyOptional()
-  createdAt?: Date;
+  createdAt?: Date | string;
 
   @ApiPropertyOptional()
   updatedAt?: Date;

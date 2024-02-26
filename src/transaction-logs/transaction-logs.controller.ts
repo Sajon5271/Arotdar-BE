@@ -15,6 +15,9 @@ import { UpdateDueOfPartners } from './dtos/update-due-amount.dto';
 import { BuyProductDTO } from './dtos/buy-products.dto';
 import { BuyLogs } from '../schemas/buy-logs.schema';
 import { BuyService } from './services/buy.service';
+import { SellService } from './services/sell.service';
+import { SellProductDTO } from './dtos/sell-product.dto';
+import { DateTime } from 'luxon';
 
 @ApiTags('Transactions')
 @ApiCookieAuth()
@@ -24,25 +27,33 @@ export class TransactionLogsController {
   constructor(
     private transactionLogsService: TransactionLogsService,
     private buyService: BuyService,
+    private sellService: SellService,
   ) {}
 
   @Get('all-transaction')
   @GenericArrayResponse(TransactionLogs)
-  getAllLogs() {
-    return this.transactionLogsService.getAll();
+  async getAllLogs() {
+    const buyLogs = await this.buyService.getAll();
+    const sellLogs = await this.sellService.getAll();
+    const allLogs = [...buyLogs, ...sellLogs];
+    return allLogs.toSorted((a, b) => {
+      const aTime = DateTime.fromJSDate(new Date(a.createdAt));
+      const bTime = DateTime.fromJSDate(new Date(b.createdAt));
+      return aTime < bTime ? 1 : aTime > bTime ? -1 : 0;
+    });
   }
 
   @Get('sell-transactions')
   @GenericArrayResponse(TransactionLogs)
   @Roles(['admin', 'employee'])
   getSellTransactions() {
-    return this.transactionLogsService.getAllOfType(TransactionType.Sell);
+    return this.sellService.getAll();
   }
 
   @Get('buy-transactions')
   @GenericArrayResponse(TransactionLogs)
   getBuyTransactions() {
-    return this.transactionLogsService.getAllOfType(TransactionType.Buy);
+    return this.buyService.getAll();
   }
 
   // @Post('add-new')
@@ -72,9 +83,11 @@ export class TransactionLogsController {
   @GenericObjectResponse(TransactionLogs)
   @Roles(['admin', 'employee'])
   sellProoduct(
-    @Body() transactionInfo: NewTransactionDto,
+    @Body() transactionInfo: SellProductDTO,
     @CurrentUser() user: PublicUserProperties,
-  ) {}
+  ) {
+    return this.sellService.sellProduct(transactionInfo, user._id);
+  }
 
   @Post('update-dues')
   @GenericObjectResponse(TransactionLogs)

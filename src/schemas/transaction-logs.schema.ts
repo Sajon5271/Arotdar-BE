@@ -60,7 +60,7 @@ export class TransactionLogs {
   finalPrice: number;
 
   @ApiPropertyOptional()
-  createdAt?: Date;
+  createdAt?: Date | string;
 
   @ApiPropertyOptional()
   updatedAt?: Date;

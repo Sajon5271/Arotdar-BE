@@ -53,7 +53,7 @@ export class BuyLogs {
   affectedLotIds: string[];
 
   @ApiPropertyOptional()
-  createdAt?: Date;
+  createdAt?: Date | string;
 
   @ApiPropertyOptional()
   updatedAt?: Date;

@@ -53,4 +53,15 @@ export class SellService {
       updatedBy: userId,
     });
   }
+
+  async getAll() {
+    return this.sellLogs.find({}).sort('-createdAt');
+  }
+
+  async getById(transactionId: string) {
+    return this.sellLogs.findById(transactionId);
+  }
+  async getForPartner(partnerId: string) {
+    return this.sellLogs.find({ partnerId }).sort('-createdAt');
+  }
 }
