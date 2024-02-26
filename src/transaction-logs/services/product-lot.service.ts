@@ -18,4 +18,19 @@ export class ProductLotService {
       quantityRemaining: quantity,
     });
   }
+
+  async getLotForProducts(productIds: string[]) {
+    return this.productLot
+      .find({
+        lotProductId: { $in: productIds },
+        quantityRemaining: { $gt: 0 },
+      })
+      .sort('-createdAt');
+  }
+
+  async updateLotQuantity(id: string, newQuantity: number) {
+    return this.productLot.findByIdAndUpdate(id, {
+      quantityRemaining: newQuantity,
+    });
+  }
 }

@@ -66,6 +66,21 @@ export class InventoryService {
     return product;
   }
 
+  async sellingInventory(
+    id: string,
+    quantity: number,
+    currentLotIdsRemaining: string[],
+  ): Promise<Inventory> {
+    const product = await this.inventory.findById(id);
+    if (!product) throw new NotFoundException('Product not found');
+    if (quantity) {
+      product.totalCurrentQuantity = quantity;
+      product.lotIdsContainingProduct = currentLotIdsRemaining;
+    }
+    await product.save();
+    return product;
+  }
+
   async updatePrice(id: string, newPrice: number): Promise<Inventory> {
     return await this.updateProduct(id, { currentPricePerUnit: newPrice });
   }

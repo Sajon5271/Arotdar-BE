@@ -8,9 +8,9 @@ import {
   IsOptional,
   ValidateNested,
 } from 'class-validator';
-import { BuyProductInfoDTO } from './partials/product.dto';
+import { BuyProductInfoDTO, SellProductInfoDTO } from './partials/product.dto';
 
-export class BuyProductDTO {
+export class SellProductDTO {
   @ApiProperty({
     type: 'array',
     items: {
@@ -19,20 +19,22 @@ export class BuyProductDTO {
         productId: { type: 'string' },
         quantityTraded: { type: 'number' },
         pricePerUnit: { type: 'number' },
+        discount: { type: 'number', minimum: 0, maximum: 1, default: 0 },
       },
     },
   })
   @IsArray({ message: 'Invalid data model' })
   @ArrayNotEmpty({ message: 'No data provided' })
   @ValidateNested({ each: true })
-  @Type(() => BuyProductInfoDTO)
-  products: BuyProductInfoDTO[];
-
-  @ApiProperty()
-  @IsMongoId({ message: 'Invalid Partner Id' })
-  partnerId: string;
+  @Type(() => SellProductInfoDTO)
+  products: SellProductInfoDTO[];
 
   @ApiPropertyOptional()
+  @IsOptional()
+  @IsMongoId({ message: 'Invalid Partner Id' })
+  partnerId?: string;
+
+  @ApiProperty()
   @IsOptional()
   partnerName?: string;
 
