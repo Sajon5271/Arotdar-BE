@@ -15,3 +15,10 @@ export class TradedProduct {
 }
 
 export const TradedProductSchema = SchemaFactory.createForClass(TradedProduct);
+
+export class SellTradeProduct extends TradedProduct {
+  @Prop({ required: true })
+  buyingPrices: { id: string; countSold: number }[];
+}
+export const SellTradProductSchema =
+  SchemaFactory.createForClass(SellTradeProduct);

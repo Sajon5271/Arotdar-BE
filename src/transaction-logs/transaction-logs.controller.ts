@@ -18,6 +18,7 @@ import { BuyService } from './services/buy.service';
 import { SellService } from './services/sell.service';
 import { SellProductDTO } from './dtos/sell-product.dto';
 import { DateTime } from 'luxon';
+import { SellLogs } from '../schemas/sell-logs.schema';
 
 @ApiTags('Transactions')
 @ApiCookieAuth()
@@ -31,7 +32,7 @@ export class TransactionLogsController {
   ) {}
 
   @Get('all-transaction')
-  @GenericArrayResponse(TransactionLogs)
+  @GenericArrayResponse(SellLogs)
   async getAllLogs() {
     const buyLogs = await this.buyService.getAll();
     const sellLogs = await this.sellService.getAll();
@@ -44,14 +45,14 @@ export class TransactionLogsController {
   }
 
   @Get('sell-transactions')
-  @GenericArrayResponse(TransactionLogs)
+  @GenericArrayResponse(SellLogs)
   @Roles(['admin', 'employee'])
   getSellTransactions() {
     return this.sellService.getAll();
   }
 
   @Get('buy-transactions')
-  @GenericArrayResponse(TransactionLogs)
+  @GenericArrayResponse(BuyLogs)
   getBuyTransactions() {
     return this.buyService.getAll();
   }
@@ -80,7 +81,7 @@ export class TransactionLogsController {
   }
 
   @Post('sell-product')
-  @GenericObjectResponse(TransactionLogs)
+  @GenericObjectResponse(SellLogs)
   @Roles(['admin', 'employee'])
   sellProoduct(
     @Body() transactionInfo: SellProductDTO,

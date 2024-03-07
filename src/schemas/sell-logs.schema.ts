@@ -3,11 +3,14 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { HydratedDocument } from 'mongoose';
 import { CustomerType } from '../enums/UserTypes.enum';
 import {
+  SellTradProductSchema,
   TradedProduct,
   TradedProductSchema,
 } from './partials/TradedProduct.schema';
 
 export type SellLogModel = HydratedDocument<SellLogs>;
+
+export type SellTradeProductInfo = TradedProduct & { buyingPrices: number[] };
 
 @Schema({ timestamps: true })
 export class SellLogs {
@@ -22,11 +25,21 @@ export class SellLogs {
         quantityTraded: { type: 'number' },
         pricePerUnit: { type: 'number' },
         discount: { type: 'number', maximum: 1, minimum: 0 },
+        buyingPrices: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              id: { type: 'string' },
+              countSold: { type: 'number' },
+            },
+          },
+        },
       },
     },
   })
-  @Prop({ required: true, type: [TradedProductSchema] })
-  products: TradedProduct[];
+  @Prop({ required: true, type: [SellTradProductSchema] })
+  products: SellTradeProductInfo[];
 
   @ApiProperty({ enum: CustomerType })
   @Prop({ type: Number })
