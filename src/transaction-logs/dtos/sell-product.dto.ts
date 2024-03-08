@@ -8,7 +8,7 @@ import {
   IsOptional,
   ValidateNested,
 } from 'class-validator';
-import { BuyProductInfoDTO, SellProductInfoDTO } from './partials/product.dto';
+import { SellProductInfoDTO } from './partials/product.dto';
 
 export class SellProductDTO {
   @ApiProperty({

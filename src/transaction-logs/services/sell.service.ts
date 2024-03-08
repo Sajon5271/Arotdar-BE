@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { InventoryService } from '../../inventory/inventory.service';
+import { SellTradeProduct } from '../../schemas/partials/TradedProduct.schema';
 import { SellLogs } from '../../schemas/sell-logs.schema';
 import { SellProductDTO } from '../dtos/sell-product.dto';
 import { ProductLotService } from './product-lot.service';
@@ -18,11 +19,13 @@ export class SellService {
     const allLotsToUpdate = await this.productLotService.getLotForProducts(
       info.products.map((el) => el.productId),
     );
+    const productsToSave: SellTradeProduct[] = [];
     info.products.forEach((item) => {
       const lotForProduct = allLotsToUpdate.filter(
         (lot) => lot.lotProductId === item.productId,
       );
       let productRemainingToCalc = item.quantityTraded;
+      const buyingPrices = [];
       for (const lot of lotForProduct) {
         if (!productRemainingToCalc) break;
         const newQuantity =
@@ -31,6 +34,10 @@ export class SellService {
             : 0;
         productRemainingToCalc =
           productRemainingToCalc - (lot.quantityRemaining - newQuantity);
+        buyingPrices.push({
+          id: lot._id,
+          countSold: lot.quantityRemaining - newQuantity,
+        });
         if (newQuantity !== lot.quantityRemaining)
           this.productLotService.updateLotQuantity(lot._id, newQuantity);
         lot.quantityRemaining = newQuantity;
@@ -38,6 +45,7 @@ export class SellService {
       const remainingQuantity = lotForProduct.filter(
         (el) => el.quantityRemaining > 0,
       );
+      productsToSave.push({ ...item, buyingPrices });
       this.inventoryService.sellingInventory(
         item.productId,
         remainingQuantity.reduce(
@@ -49,6 +57,7 @@ export class SellService {
     });
     return this.sellLogs.create({
       ...info,
+      products: productsToSave,
       lotsUsedInTrade: allLotsToUpdate.map((lot) => lot._id),
       updatedBy: userId,
     });

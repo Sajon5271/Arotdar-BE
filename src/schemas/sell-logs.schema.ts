@@ -4,13 +4,12 @@ import { HydratedDocument } from 'mongoose';
 import { CustomerType } from '../enums/UserTypes.enum';
 import {
   SellTradProductSchema,
+  SellTradeProduct,
   TradedProduct,
   TradedProductSchema,
 } from './partials/TradedProduct.schema';
 
 export type SellLogModel = HydratedDocument<SellLogs>;
-
-export type SellTradeProductInfo = TradedProduct & { buyingPrices: number[] };
 
 @Schema({ timestamps: true })
 export class SellLogs {
@@ -39,7 +38,7 @@ export class SellLogs {
     },
   })
   @Prop({ required: true, type: [SellTradProductSchema] })
-  products: SellTradeProductInfo[];
+  products: SellTradeProduct[];
 
   @ApiProperty({ enum: CustomerType })
   @Prop({ type: Number })
