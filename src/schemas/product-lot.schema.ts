@@ -8,7 +8,7 @@ export type ProductLotModel = HydratedDocument<ProductLotInfo>;
 export class ProductLotInfo extends Document {
   @ApiProperty()
   @Prop({ required: true })
-  _id?: string;
+  declare _id?: string;
 
   @ApiProperty()
   @Prop({ required: true })
