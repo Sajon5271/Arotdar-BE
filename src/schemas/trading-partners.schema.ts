@@ -26,6 +26,10 @@ export class TradingPartner {
   @ApiPropertyOptional()
   companyName?: string;
 
+  @Prop()
+  @ApiPropertyOptional()
+  location?: string;
+
   @Prop({ required: true })
   @ApiProperty()
   totalCurrentDue: number;

@@ -27,4 +27,9 @@ export class PartnerDetailsDto {
   @IsOptional()
   @ApiProperty()
   companyName?: string;
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty()
+  location?: string;
 }
