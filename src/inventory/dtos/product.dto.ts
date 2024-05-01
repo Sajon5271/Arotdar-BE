@@ -26,6 +26,7 @@ export class ProductDto {
 
   @ApiProperty()
   // @Min(0)
+  @IsOptional()
   @IsNumber({}, { message: 'Quantity must be a number' })
   quantity: number;
 

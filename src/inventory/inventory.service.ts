@@ -18,6 +18,7 @@ export class InventoryService {
   async getAllProduct(): Promise<Inventory[]> {
     return this.inventory.find({});
   }
+
   async getProductById(id: string): Promise<Inventory> {
     return this.inventory.findById(id);
   }

@@ -22,6 +22,10 @@ export class SellService {
       info.products.map((el) => el.productId),
     );
     const productsToSave: SellTradeProduct[] = [];
+    const allProducts = await this.inventoryService.getAllProduct();
+    const allProductNameMap = allProducts.reduce((acc, curr) => {
+      return { ...acc, [curr._id]: curr.productName };
+    }, {});
     info.products.forEach((item) => {
       const lotForProduct = allLotsToUpdate.filter(
         (lot) => lot.lotProductId === item.productId,
@@ -39,6 +43,7 @@ export class SellService {
         buyingPrices.push({
           id: lot._id,
           countSold: lot.quantityRemaining - newQuantity,
+          boughtPricePerUnit: lot.buyingPrice,
         });
         if (newQuantity !== lot.quantityRemaining)
           this.productLotService.updateLotQuantity(lot._id, newQuantity);
@@ -47,7 +52,11 @@ export class SellService {
       const remainingQuantity = lotForProduct.filter(
         (el) => el.quantityRemaining > 0,
       );
-      productsToSave.push({ ...item, buyingPrices });
+      productsToSave.push({
+        ...item,
+        productName: allProductNameMap[item.productId],
+        buyingPrices,
+      });
       this.inventoryService.sellingInventory(
         item.productId,
         remainingQuantity.reduce(

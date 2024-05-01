@@ -83,15 +83,15 @@ export class InventoryController {
     );
   }
 
-  @Get('product-history/:id')
-  @GenericArrayResponse(InventoryLogs)
-  getProductHistory(@Param() param: ParamDto) {
-    return this.inventoryLogsService.getLogsForProduct(param.id);
-  }
+  // @Get('product-history/:id')
+  // @GenericArrayResponse(InventoryLogs)
+  // getProductHistory(@Param() param: ParamDto) {
+  //   return this.inventoryLogsService.getLogsForProduct(param.id);
+  // }
 
-  @Get('all-product-history')
-  @GenericArrayResponse(InventoryLogs)
-  getAllProductHistory() {
-    return this.inventoryLogsService.getLogsForAllProduct();
-  }
+  // @Get('all-product-history')
+  // @GenericArrayResponse(InventoryLogs)
+  // getAllProductHistory() {
+  //   return this.inventoryLogsService.getLogsForAllProduct();
+  // }
 }
