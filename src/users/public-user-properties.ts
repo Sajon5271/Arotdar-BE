@@ -21,7 +21,7 @@ export class PublicUserProperties {
 
   @Expose()
   @ApiPropertyOptional()
-  createdAt?: Date | string;
+  createdAt?: Date;
 
   @Expose()
   @ApiPropertyOptional()

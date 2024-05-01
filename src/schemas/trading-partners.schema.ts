@@ -47,7 +47,7 @@ export class TradingPartner {
   totalTrades: number;
 
   @ApiPropertyOptional()
-  createdAt?: Date | string;
+  createdAt?: Date;
 
   @ApiPropertyOptional()
   updatedAt?: Date;

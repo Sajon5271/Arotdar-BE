@@ -30,7 +30,7 @@ export class Inventory {
   currentPricePerUnit: number;
 
   @ApiPropertyOptional()
-  createdAt?: Date | string;
+  createdAt?: Date;
 
   @ApiPropertyOptional()
   updatedAt?: Date;

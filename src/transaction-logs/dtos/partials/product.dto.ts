@@ -13,8 +13,6 @@ class TradingProductDto {
 
   @IsOptional()
   @IsNumber({}, { message: 'Discount must be a number' })
-  @Max(1, { message: 'Discount must be between 0 and 1' })
-  @Min(0, { message: 'Discount must be between 0 and 1' })
   discount: number;
 }
 

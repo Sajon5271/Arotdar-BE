@@ -19,7 +19,7 @@ export class SellProductDTO {
         productId: { type: 'string' },
         quantityTraded: { type: 'number' },
         pricePerUnit: { type: 'number' },
-        discount: { type: 'number', minimum: 0, maximum: 1, default: 0 },
+        discount: { type: 'number', default: 0 },
       },
     },
   })

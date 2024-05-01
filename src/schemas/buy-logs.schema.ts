@@ -21,7 +21,7 @@ export class BuyLogs {
         productId: { type: 'string' },
         quantityTraded: { type: 'number' },
         pricePerUnit: { type: 'number' },
-        discount: { type: 'number', maximum: 1, minimum: 0 },
+        discount: { type: 'number', default: 0 },
       },
     },
   })
@@ -53,7 +53,7 @@ export class BuyLogs {
   affectedLotIds: string[];
 
   @ApiPropertyOptional()
-  createdAt?: Date | string;
+  createdAt?: Date;
 
   @ApiPropertyOptional()
   updatedAt?: Date;

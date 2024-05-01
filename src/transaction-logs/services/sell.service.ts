@@ -9,6 +9,8 @@ import { ProductLotService } from './product-lot.service';
 
 @Injectable()
 export class SellService {
+  allSellLogsCache: SellLogs[] | undefined;
+
   constructor(
     @InjectModel(SellLogs.name) private readonly sellLogs: Model<SellLogs>,
     private inventoryService: InventoryService,
@@ -55,6 +57,7 @@ export class SellService {
         remainingQuantity.map((el) => el._id),
       );
     });
+    this.allSellLogsCache = undefined;
     return this.sellLogs.create({
       ...info,
       products: productsToSave,
@@ -63,8 +66,17 @@ export class SellService {
     });
   }
 
-  async getAll() {
-    return this.sellLogs.find({}).sort('-createdAt');
+  async getAll(sortBy: string = '-createdAt'): Promise<SellLogs[]> {
+    try {
+      // TODO: Take care of sorting while caching
+      if (!this.allSellLogsCache) {
+        this.allSellLogsCache = await this.sellLogs.find({}).sort(sortBy);
+      }
+      return this.allSellLogsCache;
+    } catch (error) {
+      this.allSellLogsCache = undefined;
+      throw error;
+    }
   }
 
   async getById(transactionId: string) {

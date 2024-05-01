@@ -58,12 +58,12 @@ export class TransactionLogsService {
   }
 
   async addDueUpdateTransaction(data: UpdateDueOfPartners, updatedBy: string) {
-    const partner = await this.tradingPartnersService.uodatePartnerDue(
+    const partner = await this.tradingPartnersService.updatePartnerDue(
       data.partnerId,
       data.dueChange,
     );
     return await this.transactionLogs.create({
-      transactionType: TransactionType.DuePaymnet,
+      transactionType: TransactionType.DuePayment,
       partnerType: partner.type,
       customerType:
         partner.type === PartnerType.Customer

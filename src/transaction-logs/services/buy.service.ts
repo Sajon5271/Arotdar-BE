@@ -8,6 +8,8 @@ import { ProductLotService } from './product-lot.service';
 
 @Injectable()
 export class BuyService {
+  allBuyLogsCache: BuyLogs[] | undefined;
+
   constructor(
     @InjectModel(BuyLogs.name) private readonly buyLogs: Model<BuyLogs>,
     private inventoryService: InventoryService,
@@ -29,6 +31,7 @@ export class BuyService {
       );
       newLots.push(lot._id);
     });
+    this.allBuyLogsCache = undefined;
     return await this.buyLogs.create({
       ...info,
       affectedLotIds: newLots,
@@ -36,8 +39,17 @@ export class BuyService {
     });
   }
 
-  async getAll() {
-    return this.buyLogs.find({}).sort('-createdAt');
+  async getAll(sortBy: string = '-createdAt'): Promise<BuyLogs[]> {
+    try {
+      // TODO: Take care of sorting while caching
+      if (!this.allBuyLogsCache) {
+        this.allBuyLogsCache = await this.buyLogs.find({}).sort(sortBy);
+      }
+      return this.allBuyLogsCache;
+    } catch (error) {
+      this.allBuyLogsCache = undefined;
+      throw error;
+    }
   }
 
   async getById(transactionId: string) {

@@ -31,8 +31,6 @@ export class TradedProduct {
 
   @IsOptional()
   @IsNumber({}, { message: 'Discount must be a number' })
-  @Max(1, { message: 'Discount must be between 0 and 1' })
-  @Min(0, { message: 'Discount must be between 0 and 1' })
   discount?: number;
 }
 
@@ -45,7 +43,7 @@ export class NewTransactionDto {
         productId: { type: 'string' },
         quantityTraded: { type: 'number' },
         pricePerUnit: { type: 'number' },
-        discount: { type: 'number', maximum: 1, minimum: 0 },
+        discount: { type: 'number' },
       },
     },
   })

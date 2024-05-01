@@ -27,7 +27,7 @@ export class ProductLotInfo extends Document {
   quantityRemaining: number;
 
   @ApiPropertyOptional()
-  createdAt?: Date | string;
+  createdAt?: Date;
 
   @ApiPropertyOptional()
   updatedAt?: Date;

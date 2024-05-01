@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { ApiCookieAuth, ApiTags } from '@nestjs/swagger';
 import { Roles } from '../decorators/roles/roles.decorator';
 import {
@@ -19,6 +19,8 @@ import { SellService } from './services/sell.service';
 import { SellProductDTO } from './dtos/sell-product.dto';
 import { DateTime } from 'luxon';
 import { SellLogs } from '../schemas/sell-logs.schema';
+import { PaginationDto } from '../shared/dtos/paginated.dto';
+import { PaginatedResults } from '../trading-partners/dtos/paginated-response.dto';
 
 @ApiTags('Transactions')
 @ApiCookieAuth()
@@ -32,29 +34,61 @@ export class TransactionLogsController {
   ) {}
 
   @Get('all-transaction')
-  @GenericArrayResponse(SellLogs)
-  async getAllLogs() {
+  @GenericObjectResponse(PaginatedResults<SellLogs>)
+  async getAllLogs(@Query() paginatedQuery: PaginationDto) {
     const buyLogs = await this.buyService.getAll();
     const sellLogs = await this.sellService.getAll();
-    const allLogs = [...buyLogs, ...sellLogs];
-    return allLogs.toSorted((a, b) => {
+    const allLogs = [...buyLogs, ...sellLogs].sort((a, b) => {
       const aTime = DateTime.fromJSDate(new Date(a.createdAt));
       const bTime = DateTime.fromJSDate(new Date(b.createdAt));
       return aTime < bTime ? 1 : aTime > bTime ? -1 : 0;
     });
+    const res = allLogs.slice(
+      paginatedQuery.pageNumber * paginatedQuery.pageSize,
+      (paginatedQuery.pageNumber + 1) * paginatedQuery.pageSize,
+    );
+    return {
+      CurrentPage: paginatedQuery.pageNumber,
+      PageSize: paginatedQuery.pageSize,
+      Results: res,
+      TotalPages: Math.ceil(allLogs.length / paginatedQuery.pageSize),
+      TotalDataLength: allLogs.length,
+    };
   }
 
   @Get('sell-transactions')
-  @GenericArrayResponse(SellLogs)
+  @GenericObjectResponse(PaginatedResults<SellLogs>)
   @Roles(['admin', 'employee'])
-  getSellTransactions() {
-    return this.sellService.getAll();
+  async getSellTransactions(@Query() paginatedQuery: PaginationDto) {
+    const allLogs = await this.sellService.getAll();
+    const res = allLogs.slice(
+      paginatedQuery.pageNumber * paginatedQuery.pageSize,
+      (paginatedQuery.pageNumber + 1) * paginatedQuery.pageSize,
+    );
+    return {
+      CurrentPage: paginatedQuery.pageNumber,
+      PageSize: paginatedQuery.pageSize,
+      Results: res,
+      TotalPages: Math.ceil(allLogs.length / paginatedQuery.pageSize),
+      TotalDataLength: allLogs.length,
+    };
   }
 
   @Get('buy-transactions')
-  @GenericArrayResponse(BuyLogs)
-  getBuyTransactions() {
-    return this.buyService.getAll();
+  @GenericObjectResponse(PaginatedResults<BuyLogs>)
+  async getBuyTransactions(@Query() paginatedQuery: PaginationDto) {
+    const allLogs = await this.buyService.getAll();
+    const res = allLogs.slice(
+      paginatedQuery.pageNumber * paginatedQuery.pageSize,
+      (paginatedQuery.pageNumber + 1) * paginatedQuery.pageSize,
+    );
+    return {
+      CurrentPage: paginatedQuery.pageNumber,
+      PageSize: paginatedQuery.pageSize,
+      Results: res,
+      TotalPages: Math.ceil(allLogs.length / paginatedQuery.pageSize),
+      TotalDataLength: allLogs.length,
+    };
   }
 
   // @Post('add-new')

@@ -42,7 +42,7 @@ export class TradingPartnersService {
     return updatedPartner;
   }
 
-  async uodatePartnerDue(id: string, dueChange: number) {
+  async updatePartnerDue(id: string, dueChange: number) {
     const partner = await this.tradingPartners.findById(id);
     if (!partner) throw new NotFoundException('Partner not found');
     partner.totalCurrentDue += dueChange;
