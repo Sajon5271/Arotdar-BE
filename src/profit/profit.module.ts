@@ -16,8 +16,6 @@ import {
 @Module({
   imports: [
     MongooseModule.forFeature([
-      { name: TransactionLogs.name, schema: TransactionLogSchema },
-      { name: BuyLogs.name, schema: BuyLogsSchema },
       { name: SellLogs.name, schema: SellLogSchema },
       { name: ProductLotInfo.name, schema: ProductLotSchema },
     ]),

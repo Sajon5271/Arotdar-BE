@@ -47,6 +47,28 @@ export const GenericArrayResponse = <DataDto extends Type<unknown>>(
     }),
   );
 };
+
+export const GenericArrayOfNumberResponse = () => {
+  return applyDecorators(
+    ApiExtraModels(GenericResponseClass),
+    ApiOkResponse({
+      schema: {
+        allOf: [
+          { $ref: getSchemaPath(GenericResponseClass) },
+          {
+            properties: {
+              Data: {
+                type: 'array',
+                items: { type: 'number' },
+              },
+            },
+          },
+        ],
+      },
+    }),
+  );
+};
+
 export const GenericNullResponse = () => {
   return applyDecorators(
     ApiExtraModels(GenericResponseClass),
