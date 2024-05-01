@@ -11,6 +11,7 @@ import { InventoryModule } from './inventory/inventory.module';
 import { TradingPartnersModule } from './trading-partners/trading-partners.module';
 import { TransactionLogsModule } from './transaction-logs/transaction-logs.module';
 import { UsersModule } from './users/users.module';
+import { ProfitModule } from './profit/profit.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { UsersModule } from './users/users.module';
     TradingPartnersModule,
     InventoryModule,
     TransactionLogsModule,
+    ProfitModule,
   ],
   providers: [
     AppService,
