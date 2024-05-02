@@ -16,6 +16,7 @@ import { UpdateDueOfPartners } from './dtos/update-due-amount.dto';
 import { BuyService } from './services/buy.service';
 import { SellService } from './services/sell.service';
 import { TransactionLogsService } from './transaction-logs.service';
+import { PaginatedRangeDTO } from './dtos/paginated-range.dto';
 
 @ApiTags('Transactions')
 @ApiCookieAuth()
@@ -68,6 +69,28 @@ export class TransactionLogsController {
       TotalDataLength: allLogs.length,
     };
   }
+  @Post('sell-transaction-in-range')
+  @GenericObjectResponse(PaginatedResults<BuyLogs>)
+  async getSellTransactionsForRange(@Body() paginatedRange: PaginatedRangeDTO) {
+    const allLogs = await this.sellService.getAll();
+    const fromDateTime = DateTime.fromJSDate(paginatedRange.from);
+    const toDateTime = DateTime.fromJSDate(paginatedRange.to);
+    const inRangeLogs = allLogs.filter((log) => {
+      const logDate = DateTime.fromJSDate(log.createdAt);
+      return logDate <= toDateTime && logDate >= fromDateTime;
+    });
+    const res = inRangeLogs.slice(
+      paginatedRange.pageNumber * paginatedRange.pageSize,
+      (paginatedRange.pageNumber + 1) * paginatedRange.pageSize,
+    );
+    return {
+      CurrentPage: paginatedRange.pageNumber,
+      PageSize: paginatedRange.pageSize,
+      Results: res,
+      TotalPages: Math.ceil(inRangeLogs.length / paginatedRange.pageSize),
+      TotalDataLength: inRangeLogs.length,
+    };
+  }
 
   @Get('dummy-single-sell-transaction')
   @GenericObjectResponse(SellLogs)
@@ -90,6 +113,29 @@ export class TransactionLogsController {
       Results: res,
       TotalPages: Math.ceil(allLogs.length / paginatedQuery.pageSize),
       TotalDataLength: allLogs.length,
+    };
+  }
+
+  @Post('buy-transaction-in-range')
+  @GenericObjectResponse(PaginatedResults<BuyLogs>)
+  async getBuyTransactionsForRange(@Body() paginatedRange: PaginatedRangeDTO) {
+    const allLogs = await this.buyService.getAll();
+    const fromDateTime = DateTime.fromJSDate(paginatedRange.from);
+    const toDateTime = DateTime.fromJSDate(paginatedRange.to);
+    const inRangeLogs = allLogs.filter((log) => {
+      const logDate = DateTime.fromJSDate(log.createdAt);
+      return logDate <= toDateTime && logDate >= fromDateTime;
+    });
+    const res = inRangeLogs.slice(
+      paginatedRange.pageNumber * paginatedRange.pageSize,
+      (paginatedRange.pageNumber + 1) * paginatedRange.pageSize,
+    );
+    return {
+      CurrentPage: paginatedRange.pageNumber,
+      PageSize: paginatedRange.pageSize,
+      Results: res,
+      TotalPages: Math.ceil(inRangeLogs.length / paginatedRange.pageSize),
+      TotalDataLength: inRangeLogs.length,
     };
   }
 
