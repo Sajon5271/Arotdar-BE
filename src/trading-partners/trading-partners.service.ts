@@ -28,6 +28,7 @@ export class TradingPartnersService {
       totalCurrentDue: 0,
       totalCurrentSalesQuantity: 0,
       totalTrades: 0,
+      totalLifetimePaid: 0,
     });
     await newPartner.save();
     return newPartner;
