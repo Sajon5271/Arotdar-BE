@@ -10,7 +10,7 @@ import {
 import { HTTP_CODE_METADATA, METHOD_METADATA } from '@nestjs/common/constants';
 import { Reflector } from '@nestjs/core';
 import { ApiProperty } from '@nestjs/swagger';
-import { Observable, catchError, map, throwError } from 'rxjs';
+import { Observable, catchError, map, of, throwError } from 'rxjs';
 
 export interface GenericResponseInterface<T> {
   Success: boolean;
@@ -61,25 +61,24 @@ export class GenericInterceptor<T>
       }),
       catchError((err) => {
         console.log(err);
-        return throwError(() => {
-          let message: string | string[] = 'Internal Server Error';
-          let status = 500;
-          if (err instanceof HttpException) {
-            const currResponse = err.getResponse();
-            message =
-              (typeof currResponse === 'string'
-                ? currResponse
-                : currResponse['message']) || err.message;
-            status = err.getStatus();
-          } else if (typeof err === 'string') {
-            message = err;
-          }
-          return {
-            Success: false,
-            Data: null,
-            Status: status,
-            ErrorMessages: Array.isArray(message) ? message : [message],
-          };
+
+        let message: string | string[] = 'Internal Server Error';
+        let status = 500;
+        if (err instanceof HttpException) {
+          const currResponse = err.getResponse();
+          message =
+            (typeof currResponse === 'string'
+              ? currResponse
+              : currResponse['message']) || err.message;
+          status = err.getStatus();
+        } else if (typeof err === 'string') {
+          message = err;
+        }
+        return of({
+          Success: false,
+          Data: null,
+          Status: status,
+          ErrorMessages: Array.isArray(message) ? message : [message],
         });
       }),
     );
