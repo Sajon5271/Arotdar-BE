@@ -74,15 +74,12 @@ export class GenericInterceptor<T>
           } else if (typeof err === 'string') {
             message = err;
           }
-          return new HttpException(
-            {
-              Success: false,
-              Data: null,
-              Status: status,
-              ErrorMessages: Array.isArray(message) ? message : [message],
-            },
-            status,
-          );
+          return {
+            Success: false,
+            Data: null,
+            Status: status,
+            ErrorMessages: Array.isArray(message) ? message : [message],
+          };
         });
       }),
     );
