@@ -31,6 +31,7 @@ export class SellLogs {
             properties: {
               id: { type: 'string' },
               countSold: { type: 'number' },
+              boughtPricePerUnit: { type: 'number' },
             },
           },
         },

@@ -1,26 +1,21 @@
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { ApiCookieAuth, ApiTags } from '@nestjs/swagger';
-import { Roles } from '../decorators/roles/roles.decorator';
-import {
-  GenericArrayResponse,
-  GenericObjectResponse,
-} from '../swagger/GenericResponseDecorator';
-import { TransactionLogs } from '../schemas/transaction-logs.schema';
-import { TransactionLogsService } from './transaction-logs.service';
-import { TransactionType } from '../enums/Transaction.enum';
-import { NewTransactionDto } from './dtos/new-transaction.dto';
+import { DateTime } from 'luxon';
 import { CurrentUser } from '../decorators/CurrentUser.decorator';
-import { PublicUserProperties } from '../users/public-user-properties';
-import { UpdateDueOfPartners } from './dtos/update-due-amount.dto';
-import { BuyProductDTO } from './dtos/buy-products.dto';
+import { Roles } from '../decorators/roles/roles.decorator';
 import { BuyLogs } from '../schemas/buy-logs.schema';
+import { SellLogs } from '../schemas/sell-logs.schema';
+import { TransactionLogs } from '../schemas/transaction-logs.schema';
+import { PaginationDto } from '../shared/dtos/paginated.dto';
+import { GenericObjectResponse } from '../swagger/GenericResponseDecorator';
+import { PaginatedResults } from '../trading-partners/dtos/paginated-response.dto';
+import { PublicUserProperties } from '../users/public-user-properties';
+import { BuyProductDTO } from './dtos/buy-products.dto';
+import { SellProductDTO } from './dtos/sell-product.dto';
+import { UpdateDueOfPartners } from './dtos/update-due-amount.dto';
 import { BuyService } from './services/buy.service';
 import { SellService } from './services/sell.service';
-import { SellProductDTO } from './dtos/sell-product.dto';
-import { DateTime } from 'luxon';
-import { SellLogs } from '../schemas/sell-logs.schema';
-import { PaginationDto } from '../shared/dtos/paginated.dto';
-import { PaginatedResults } from '../trading-partners/dtos/paginated-response.dto';
+import { TransactionLogsService } from './transaction-logs.service';
 
 @ApiTags('Transactions')
 @ApiCookieAuth()
@@ -74,6 +69,13 @@ export class TransactionLogsController {
     };
   }
 
+  @Get('dummy-single-sell-transaction')
+  @GenericObjectResponse(SellLogs)
+  @Roles(['admin', 'employee'])
+  async dummy1() {
+    return null;
+  }
+
   @Get('buy-transactions')
   @GenericObjectResponse(PaginatedResults<BuyLogs>)
   async getBuyTransactions(@Query() paginatedQuery: PaginationDto) {
@@ -89,6 +91,13 @@ export class TransactionLogsController {
       TotalPages: Math.ceil(allLogs.length / paginatedQuery.pageSize),
       TotalDataLength: allLogs.length,
     };
+  }
+
+  @Get('dummy-single-buy-transaction')
+  @GenericObjectResponse(BuyLogs)
+  @Roles(['admin', 'employee'])
+  async dummy2() {
+    return null;
   }
 
   // @Post('add-new')

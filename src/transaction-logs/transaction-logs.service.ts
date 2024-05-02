@@ -64,9 +64,9 @@ export class TransactionLogsService {
     );
     return await this.transactionLogs.create({
       transactionType: TransactionType.DuePayment,
-      partnerType: partner.type,
+      partnerType: partner.partnerType,
       customerType:
-        partner.type === PartnerType.Customer
+        partner.partnerType === PartnerType.Customer
           ? CustomerType.Regular
           : undefined,
       partnerId: partner._id,
