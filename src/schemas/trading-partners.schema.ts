@@ -20,7 +20,7 @@ export class TradingPartner {
 
   @Prop({ required: true, type: Number })
   @ApiProperty({ enum: PartnerType })
-  type: PartnerType;
+  partnerType: PartnerType;
 
   @Prop()
   @ApiPropertyOptional()

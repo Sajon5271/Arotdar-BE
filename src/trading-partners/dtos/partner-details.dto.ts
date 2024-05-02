@@ -21,7 +21,7 @@ export class PartnerDetailsDto {
 
   @IsEnum(PartnerType, { message: 'Wrong type' })
   @ApiProperty({ enum: PartnerType })
-  type: PartnerType;
+  partnerType: PartnerType;
 
   @IsString()
   @IsOptional()
