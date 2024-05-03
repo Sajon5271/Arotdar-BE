@@ -1,13 +1,20 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsNumberString,
+  IsOptional,
+  IsString,
+  Validate,
+} from 'class-validator';
+import { IsNumberOrString } from '../check-number-or-string.validator';
 
 export class PaginationDto {
-  @IsNumber({}, { message: 'Invalid PageNumber' })
+  @Validate(IsNumberOrString, { message: 'Invalid PageNumber' })
   @IsNotEmpty()
   @ApiProperty()
   pageNumber: number;
 
-  @IsNumber({}, { message: 'Invalid PageSize' })
+  @Validate(IsNumberOrString, { message: 'Invalid PageSize' })
   @IsNotEmpty()
   @ApiProperty()
   pageSize: number;
