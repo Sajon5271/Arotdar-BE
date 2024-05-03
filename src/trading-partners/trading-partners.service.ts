@@ -18,8 +18,8 @@ export class TradingPartnersService {
     return await this.tradingPartners.findById(id);
   }
 
-  async getType(type: PartnerType): Promise<TradingPartner[]> {
-    return await this.tradingPartners.find({ type });
+  async getType(partnerType: PartnerType): Promise<TradingPartner[]> {
+    return await this.tradingPartners.find({ partnerType });
   }
 
   async addPartner(partnerDetails: Partial<TradingPartner>) {
