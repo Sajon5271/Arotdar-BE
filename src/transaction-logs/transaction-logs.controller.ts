@@ -72,13 +72,18 @@ export class TransactionLogsController {
   @Post('sell-transaction-in-range')
   @GenericObjectResponse(PaginatedResults<BuyLogs>)
   async getSellTransactionsForRange(@Body() paginatedRange: PaginatedRangeDTO) {
-    const allLogs = await this.sellService.getAll();
-    const fromDateTime = DateTime.fromJSDate(paginatedRange.from);
-    const toDateTime = DateTime.fromJSDate(paginatedRange.to);
-    const inRangeLogs = allLogs.filter((log) => {
-      const logDate = DateTime.fromJSDate(log.createdAt);
-      return logDate <= toDateTime && logDate >= fromDateTime;
-    });
+    const allLogs = await (paginatedRange.partnerId
+      ? this.sellService.getForPartner(paginatedRange.partnerId)
+      : this.sellService.getAll());
+    let inRangeLogs = allLogs;
+    if (paginatedRange.from && paginatedRange.to) {
+      const fromDateTime = DateTime.fromJSDate(paginatedRange.from);
+      const toDateTime = DateTime.fromJSDate(paginatedRange.to);
+      inRangeLogs = allLogs.filter((log) => {
+        const logDate = DateTime.fromJSDate(log.createdAt);
+        return logDate <= toDateTime && logDate >= fromDateTime;
+      });
+    }
     const res = inRangeLogs.slice(
       paginatedRange.pageNumber * paginatedRange.pageSize,
       (paginatedRange.pageNumber + 1) * paginatedRange.pageSize,
@@ -119,13 +124,18 @@ export class TransactionLogsController {
   @Post('buy-transaction-in-range')
   @GenericObjectResponse(PaginatedResults<BuyLogs>)
   async getBuyTransactionsForRange(@Body() paginatedRange: PaginatedRangeDTO) {
-    const allLogs = await this.buyService.getAll();
-    const fromDateTime = DateTime.fromJSDate(paginatedRange.from);
-    const toDateTime = DateTime.fromJSDate(paginatedRange.to);
-    const inRangeLogs = allLogs.filter((log) => {
-      const logDate = DateTime.fromJSDate(log.createdAt);
-      return logDate <= toDateTime && logDate >= fromDateTime;
-    });
+    const allLogs = await (paginatedRange.partnerId
+      ? this.buyService.getForPartner(paginatedRange.partnerId)
+      : this.buyService.getAll());
+    let inRangeLogs = allLogs;
+    if (paginatedRange.from && paginatedRange.to) {
+      const fromDateTime = DateTime.fromJSDate(paginatedRange.from);
+      const toDateTime = DateTime.fromJSDate(paginatedRange.to);
+      inRangeLogs = allLogs.filter((log) => {
+        const logDate = DateTime.fromJSDate(log.createdAt);
+        return logDate <= toDateTime && logDate >= fromDateTime;
+      });
+    }
     const res = inRangeLogs.slice(
       paginatedRange.pageNumber * paginatedRange.pageSize,
       (paginatedRange.pageNumber + 1) * paginatedRange.pageSize,
