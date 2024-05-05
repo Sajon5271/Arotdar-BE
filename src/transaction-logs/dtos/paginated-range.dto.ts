@@ -1,17 +1,17 @@
-import { ApiProperty, IntersectionType, PartialType } from '@nestjs/swagger';
-import { PaginationDto } from '../../shared/dtos/paginated.dto';
-import { DateRangeDto } from '../../profit/dtos/date-range.dto';
+import { ApiProperty, IntersectionType } from '@nestjs/swagger';
 import { IsMongoId, IsOptional } from 'class-validator';
+import { DateRangeDtoOptional } from '../../profit/dtos/date-range.dto';
+import { PaginationDto } from '../../shared/dtos/paginated.dto';
 
 export class PartnerId {
-  @IsMongoId()
   @IsOptional()
+  @IsMongoId()
   @ApiProperty()
   partnerId?: string;
 }
 
 export class PaginatedRangeDTO extends IntersectionType(
   PaginationDto,
-  PartialType(DateRangeDto),
+  DateRangeDtoOptional,
   PartnerId,
 ) {}
