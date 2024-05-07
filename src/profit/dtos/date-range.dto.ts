@@ -1,25 +1,26 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDateString, IsNotEmpty, IsOptional } from 'class-validator';
+import { IsNotEmpty, IsOptional, Validate } from 'class-validator';
+import { IsValidDate } from '../../decorators/DateValidator.decorator';
 
 export class DateRangeDto {
-  @IsDateString({}, { message: 'Is not valid Date' })
+  @Validate(IsValidDate)
   @IsNotEmpty()
   @ApiProperty()
   from: Date;
 
-  @IsDateString({}, { message: 'Is not valid Date' })
+  @Validate(IsValidDate)
   @IsNotEmpty()
   @ApiProperty()
   to: Date;
 }
 
 export class DateRangeDtoOptional {
-  @IsDateString({}, { message: 'Is not valid Date' })
+  @Validate(IsValidDate)
   @IsOptional()
   @ApiProperty()
   from?: Date;
 
-  @IsDateString({}, { message: 'Is not valid Date' })
+  @Validate(IsValidDate)
   @IsOptional()
   @ApiProperty()
   to?: Date;
