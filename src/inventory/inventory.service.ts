@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Inventory } from '../schemas/inventory.schema';
+import { ProductDto, UpdateProductDto } from './dtos/product.dto';
 
 @Injectable()
 export class InventoryService {
@@ -9,9 +10,15 @@ export class InventoryService {
     @InjectModel(Inventory.name) private readonly inventory: Model<Inventory>,
   ) {}
 
-  async addNewProduct(product: Partial<Inventory>): Promise<Inventory> {
-    product.lotIdsContainingProduct = [];
-    const newProduct = await this.inventory.create(product);
+  async addNewProduct(product: ProductDto): Promise<Inventory> {
+    const productToCreate: Inventory = {
+      currentPricePerUnit: product.currentPricePerUnit,
+      lotIdsContainingProduct: [],
+      productName: product.productName,
+      totalCurrentQuantity: product.totalCurrentQuantity || 0,
+      productDescription: product.productDescription,
+    };
+    const newProduct = await this.inventory.create(productToCreate);
     return newProduct;
   }
 
@@ -25,7 +32,7 @@ export class InventoryService {
 
   async updateProduct(
     id: string,
-    updatedValues: Partial<Inventory>,
+    updatedValues: UpdateProductDto,
   ): Promise<Inventory> {
     try {
       const product = await this.inventory.findById(id);
