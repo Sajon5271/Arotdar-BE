@@ -5,10 +5,9 @@ import { Document, HydratedDocument } from 'mongoose';
 export type ProductLotModel = HydratedDocument<ProductLotInfo>;
 
 @Schema({ timestamps: true })
-export class ProductLotInfo extends Document {
+export class ProductLotInfo {
   @ApiProperty()
-  @Prop({ required: true })
-  declare _id?: string;
+  _id?: string;
 
   @ApiProperty()
   @Prop({ required: true })

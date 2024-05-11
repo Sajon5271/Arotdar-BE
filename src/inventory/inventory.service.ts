@@ -73,6 +73,29 @@ export class InventoryService {
     await product.save();
     return product;
   }
+  async buyingMultipleInventory(
+    products: { id: string; quantity: number; newLotId: string }[],
+  ): Promise<Inventory[]> {
+    const productsToUpdate = await this.inventory.find({
+      _id: { $in: products.map((el) => el.id) },
+    });
+
+    const promisesToSave: Promise<Inventory>[] = [];
+
+    if (!productsToUpdate || !productsToUpdate.length)
+      throw new NotFoundException('Products not found');
+    productsToUpdate.forEach((product) => {
+      const info = products.find((el) => el.id);
+      if (!info) return;
+      if (info.quantity) {
+        product.totalCurrentQuantity += info.quantity;
+        product.lotIdsContainingProduct.push(info.newLotId);
+      }
+      promisesToSave.push(product.save());
+    });
+    const allUpdatedProducts = await Promise.all(promisesToSave);
+    return allUpdatedProducts;
+  }
 
   async sellingInventory(
     id: string,

@@ -20,6 +20,7 @@ export class BuyLogs {
       properties: {
         productId: { type: 'string' },
         quantityTraded: { type: 'number' },
+        productName: { type: 'string' },
         pricePerUnit: { type: 'number' },
         discount: { type: 'number', default: 0 },
       },

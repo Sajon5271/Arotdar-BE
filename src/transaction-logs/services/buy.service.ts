@@ -5,6 +5,7 @@ import { Model } from 'mongoose';
 import { InventoryService } from '../../inventory/inventory.service';
 import { BuyProductDTO } from '../dtos/buy-products.dto';
 import { ProductLotService } from './product-lot.service';
+import { TradedProduct } from '../../schemas/partials/TradedProduct.schema';
 
 @Injectable()
 export class BuyService {
@@ -17,24 +18,41 @@ export class BuyService {
   ) {}
 
   async buyProducts(info: BuyProductDTO, userId: string) {
-    const newLots = [];
-    info.products.forEach(async (product) => {
-      const lot = await this.productLotService.addNewLot(
-        product.productId,
-        product.pricePerUnit,
-        product.quantityTraded,
-      );
-      await this.inventoryService.buyingInventory(
-        product.productId,
-        product.quantityTraded,
-        lot._id,
-      );
-      newLots.push(lot._id);
+    const allProducts = await this.inventoryService.getAllProduct();
+    const allProductNameMap = allProducts.reduce((acc, curr) => {
+      return { ...acc, [curr._id]: curr.productName };
+    }, {});
+    const lots = await this.productLotService.addMultipleNewLot(
+      info.products.map((prod) => {
+        return {
+          price: prod.pricePerUnit,
+          productId: prod.productId,
+          quantity: prod.quantityTraded,
+        };
+      }),
+    );
+    const lotIds = lots.map((lot) => lot._id);
+    const lotProductMaps = lots.map((el) => {
+      return {
+        id: el.lotProductId,
+        quantity: el.quantityBought,
+        newLotId: el._id,
+      };
     });
+    await this.inventoryService.buyingMultipleInventory(lotProductMaps);
+    const productsToSave: TradedProduct[] = [];
+    info.products.forEach(async (product) => {
+      productsToSave.push({
+        ...product,
+        productName: allProductNameMap[product.productId],
+      });
+    });
+
     this.allBuyLogsCache = undefined;
     return await this.buyLogs.create({
       ...info,
-      affectedLotIds: newLots,
+      products: productsToSave,
+      affectedLotIds: lotIds,
       updatedBy: userId,
     });
   }

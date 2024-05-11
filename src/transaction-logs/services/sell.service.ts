@@ -17,6 +17,7 @@ export class SellService {
     private productLotService: ProductLotService,
   ) {}
 
+  // TODO: Throw error if more quantity than possible is sent
   async sellProduct(info: SellProductDTO, userId: string) {
     const allLotsToUpdate = await this.productLotService.getLotForProducts(
       info.products.map((el) => el.productId),
