@@ -6,6 +6,7 @@ import { SellTradeProduct } from '../../schemas/partials/TradedProduct.schema';
 import { SellLogs } from '../../schemas/sell-logs.schema';
 import { SellProductDTO } from '../dtos/sell-product.dto';
 import { ProductLotService } from './product-lot.service';
+import { CustomerType } from '../../enums/UserTypes.enum';
 
 @Injectable()
 export class SellService {
@@ -70,6 +71,7 @@ export class SellService {
     this.allSellLogsCache = undefined;
     return this.sellLogs.create({
       ...info,
+      customerType: info.partnerId ? CustomerType.Regular : CustomerType.Normal,
       products: productsToSave,
       lotsUsedInTrade: allLotsToUpdate.map((lot) => lot._id),
       updatedBy: userId,
