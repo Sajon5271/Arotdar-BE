@@ -1,22 +1,22 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { InventoryModule } from '../inventory/inventory.module';
-import {
-  TransactionLogSchema,
-  TransactionLogs,
-} from '../schemas/transaction-logs.schema';
-import { TransactionLogsController } from './transaction-logs.controller';
-import { TransactionLogsService } from './transaction-logs.service';
-import { TradingPartnersModule } from '../trading-partners/trading-partners.module';
 import { BuyLogs, BuyLogsSchema } from '../schemas/buy-logs.schema';
-import { SellLogSchema, SellLogs } from '../schemas/sell-logs.schema';
-import { BuyService } from './services/buy.service';
-import { SellService } from './services/sell.service';
-import { ProductLotService } from './services/product-lot.service';
 import {
   ProductLotInfo,
   ProductLotSchema,
 } from '../schemas/product-lot.schema';
+import { SellLogSchema, SellLogs } from '../schemas/sell-logs.schema';
+import {
+  TransactionLogSchema,
+  TransactionLogs,
+} from '../schemas/transaction-logs.schema';
+import { TradingPartnersModule } from '../trading-partners/trading-partners.module';
+import { BuyService } from './services/buy.service';
+import { ProductLotService } from './services/product-lot.service';
+import { SellService } from './services/sell.service';
+import { TransactionLogsController } from './transaction-logs.controller';
+import { TransactionLogsService } from './transaction-logs.service';
 
 @Module({
   imports: [

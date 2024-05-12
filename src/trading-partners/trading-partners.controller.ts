@@ -26,26 +26,13 @@ import { TradingPartnersService } from './trading-partners.service';
 @ApiCookieAuth()
 @Controller('trading-partners')
 export class TradingPartnersController {
-  allTradingPartnersCache: TradingPartner[] | undefined;
-  allCustomersPartnersCache: TradingPartner[] | undefined;
-  allSupplierPartnersCache: TradingPartner[] | undefined;
-
   constructor(private tradingPartnersService: TradingPartnersService) {}
 
   @Get('all-partners')
   @GenericArrayResponse(TradingPartner)
   @Roles(['admin', 'employee'])
   async getAll() {
-    try {
-      if (!this.allTradingPartnersCache) {
-        this.allTradingPartnersCache =
-          await this.tradingPartnersService.getAll();
-      }
-      return this.allTradingPartnersCache;
-    } catch (err) {
-      this.allTradingPartnersCache = undefined;
-      throw err;
-    }
+    return this.tradingPartnersService.getAll();
   }
 
   @Get('partners')
@@ -54,11 +41,9 @@ export class TradingPartnersController {
   async getAllPaginated(
     @Query() paginatedQuery: PaginationDto,
   ): Promise<PaginatedResults<TradingPartner>> {
-    if (!this.allTradingPartnersCache) {
-      await this.getAll();
-    }
+    const allPartners = await this.getAll();
 
-    const res = this.allTradingPartnersCache
+    const res = allPartners
       .toSorted((a, b) => {
         // TODO: Need to implement sorting
         return 0;
@@ -72,10 +57,8 @@ export class TradingPartnersController {
       CurrentPage: paginatedQuery.pageNumber,
       PageSize: paginatedQuery.pageSize,
       Results: res,
-      TotalPages: Math.ceil(
-        this.allTradingPartnersCache.length / paginatedQuery.pageSize,
-      ),
-      TotalDataLength: this.allTradingPartnersCache.length,
+      TotalPages: Math.ceil(allPartners.length / paginatedQuery.pageSize),
+      TotalDataLength: allPartners.length,
     };
   }
 
@@ -86,11 +69,10 @@ export class TradingPartnersController {
     @Query() paginatedQuery: PaginationDto,
   ): Promise<PaginatedResults<TradingPartner>> {
     try {
-      if (!this.allCustomersPartnersCache) {
-        this.allCustomersPartnersCache =
-          await this.tradingPartnersService.getType(PartnerType.Customer);
-      }
-      const res = this.allCustomersPartnersCache
+      const allCustomers = await this.tradingPartnersService.getType(
+        PartnerType.Customer,
+      );
+      const res = allCustomers
         .toSorted((a, b) => {
           // TODO: Need to implement sorting
           return 0;
@@ -103,13 +85,10 @@ export class TradingPartnersController {
         CurrentPage: paginatedQuery.pageNumber,
         PageSize: paginatedQuery.pageSize,
         Results: res,
-        TotalPages: Math.ceil(
-          this.allCustomersPartnersCache.length / paginatedQuery.pageSize,
-        ),
-        TotalDataLength: this.allCustomersPartnersCache.length,
+        TotalPages: Math.ceil(allCustomers.length / paginatedQuery.pageSize),
+        TotalDataLength: allCustomers.length,
       };
     } catch (error) {
-      this.allCustomersPartnersCache = undefined;
       throw error;
     }
   }
@@ -121,11 +100,11 @@ export class TradingPartnersController {
     @Query() paginatedQuery: PaginationDto,
   ): Promise<PaginatedResults<TradingPartner>> {
     try {
-      if (!this.allSupplierPartnersCache) {
-        this.allSupplierPartnersCache =
-          await this.tradingPartnersService.getType(PartnerType.Supplier);
-      }
-      const res = this.allSupplierPartnersCache
+      const allSuppliers = await this.tradingPartnersService.getType(
+        PartnerType.Supplier,
+      );
+
+      const res = allSuppliers
         .toSorted((a, b) => {
           // TODO: Need to implement sorting
           return 0;
@@ -138,13 +117,10 @@ export class TradingPartnersController {
         CurrentPage: paginatedQuery.pageNumber,
         PageSize: paginatedQuery.pageSize,
         Results: res,
-        TotalPages: Math.ceil(
-          this.allSupplierPartnersCache.length / paginatedQuery.pageSize,
-        ),
-        TotalDataLength: this.allSupplierPartnersCache.length,
+        TotalPages: Math.ceil(allSuppliers.length / paginatedQuery.pageSize),
+        TotalDataLength: allSuppliers.length,
       };
     } catch (error) {
-      this.allSupplierPartnersCache = undefined;
       throw error;
     }
   }
@@ -153,9 +129,6 @@ export class TradingPartnersController {
   @GenericObjectResponse(TradingPartner)
   @Roles(['admin'])
   addPartner(@Body() partnerDetails: PartnerDetailsDto) {
-    this.allTradingPartnersCache = undefined;
-    this.allCustomersPartnersCache = undefined;
-    this.allSupplierPartnersCache = undefined;
     return this.tradingPartnersService.addPartner(partnerDetails);
   }
 
@@ -164,9 +137,6 @@ export class TradingPartnersController {
   @GenericNullResponse()
   @Roles(['admin'])
   removePartner(@Param() param: ParamDto) {
-    this.allTradingPartnersCache = undefined;
-    this.allCustomersPartnersCache = undefined;
-    this.allSupplierPartnersCache = undefined;
     return this.tradingPartnersService.deletePartner(param.id);
   }
 }

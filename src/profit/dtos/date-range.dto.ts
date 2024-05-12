@@ -6,22 +6,22 @@ export class DateRangeDto {
   @Validate(IsValidDate)
   @IsNotEmpty()
   @ApiProperty()
-  from: Date;
+  from: string;
 
   @Validate(IsValidDate)
   @IsNotEmpty()
   @ApiProperty()
-  to: Date;
+  to: string;
 }
 
 export class DateRangeDtoOptional {
   @Validate(IsValidDate)
   @IsOptional()
   @ApiProperty()
-  from?: Date;
+  from?: string;
 
   @Validate(IsValidDate)
   @IsOptional()
   @ApiProperty()
-  to?: Date;
+  to?: string;
 }

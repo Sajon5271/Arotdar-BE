@@ -6,6 +6,7 @@ import { InventoryService } from '../../inventory/inventory.service';
 import { BuyProductDTO } from '../dtos/buy-products.dto';
 import { ProductLotService } from './product-lot.service';
 import { TradedProduct } from '../../schemas/partials/TradedProduct.schema';
+import { TradingPartnersService } from '../../trading-partners/trading-partners.service';
 
 @Injectable()
 export class BuyService {
@@ -15,6 +16,7 @@ export class BuyService {
     @InjectModel(BuyLogs.name) private readonly buyLogs: Model<BuyLogs>,
     private inventoryService: InventoryService,
     private productLotService: ProductLotService,
+    private tradingPartnersService: TradingPartnersService,
   ) {}
 
   async buyProducts(info: BuyProductDTO, userId: string) {
@@ -47,6 +49,13 @@ export class BuyService {
         productName: allProductNameMap[product.productId],
       });
     });
+
+    await this.tradingPartnersService.updatePartnerWithNewTransaction(
+      info.partnerId,
+      info.products.reduce((a, c) => a + c.quantityTraded, 0),
+      info.due,
+      info.paid,
+    );
 
     this.allBuyLogsCache = undefined;
     return await this.buyLogs.create({

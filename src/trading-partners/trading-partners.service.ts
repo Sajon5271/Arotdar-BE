@@ -6,23 +6,29 @@ import { PartnerType } from '../enums/UserTypes.enum';
 
 @Injectable()
 export class TradingPartnersService {
+  allTradingPartnersCache: TradingPartner[] | undefined;
+
   constructor(
     @InjectModel(TradingPartner.name)
     private readonly tradingPartners: Model<TradingPartner>,
   ) {}
 
   async getAll(): Promise<TradingPartner[]> {
-    return await this.tradingPartners.find({});
+    if (!this.allTradingPartnersCache) {
+      this.allTradingPartnersCache = await this.tradingPartners.find({});
+    }
+    return this.allTradingPartnersCache;
   }
   async getPartnerById(id: string): Promise<TradingPartner> {
     return await this.tradingPartners.findById(id);
   }
 
   async getType(partnerType: PartnerType): Promise<TradingPartner[]> {
-    return await this.tradingPartners.find({ partnerType });
+    return (await this.getAll()).filter((el) => el.partnerType === partnerType);
   }
 
   async addPartner(partnerDetails: Partial<TradingPartner>) {
+    this.allTradingPartnersCache = undefined;
     const newPartner = new this.tradingPartners({
       ...partnerDetails,
       totalCurrentDue: 0,
@@ -35,6 +41,7 @@ export class TradingPartnersService {
   }
 
   async updatePartner(id: string, partnerDetails: Partial<TradingPartner>) {
+    this.allTradingPartnersCache = undefined;
     const updatedPartner = await this.tradingPartners.findByIdAndUpdate(
       id,
       partnerDetails,
@@ -44,6 +51,7 @@ export class TradingPartnersService {
   }
 
   async updatePartnerDue(id: string, dueChange: number) {
+    this.allTradingPartnersCache = undefined;
     const partner = await this.tradingPartners.findById(id);
     if (!partner) throw new NotFoundException('Partner not found');
     partner.totalCurrentDue += dueChange;
@@ -57,6 +65,7 @@ export class TradingPartnersService {
     newDueAmount: number,
     newPaidAmount: number,
   ) {
+    this.allTradingPartnersCache = undefined;
     const partner = await this.tradingPartners.findById(id);
     if (!partner) throw new NotFoundException('Partner not found');
     partner.totalCurrentDue += newDueAmount;
@@ -68,6 +77,7 @@ export class TradingPartnersService {
   }
 
   async deletePartner(id: string) {
+    this.allTradingPartnersCache = undefined;
     try {
       await this.tradingPartners.findByIdAndDelete(id);
     } catch (err) {

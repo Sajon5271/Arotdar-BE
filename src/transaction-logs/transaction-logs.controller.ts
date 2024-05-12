@@ -77,8 +77,8 @@ export class TransactionLogsController {
       : this.sellService.getAll());
     let inRangeLogs = allLogs;
     if (paginatedRange.from && paginatedRange.to) {
-      const fromDateTime = DateTime.fromJSDate(paginatedRange.from);
-      const toDateTime = DateTime.fromJSDate(paginatedRange.to);
+      const fromDateTime = DateTime.fromISO(paginatedRange.from).startOf('day');
+      const toDateTime = DateTime.fromISO(paginatedRange.to).endOf('day');
       inRangeLogs = allLogs.filter((log) => {
         const logDate = DateTime.fromJSDate(log.createdAt);
         return logDate <= toDateTime && logDate >= fromDateTime;
@@ -129,8 +129,8 @@ export class TransactionLogsController {
       : this.buyService.getAll());
     let inRangeLogs = allLogs;
     if (paginatedRange.from && paginatedRange.to) {
-      const fromDateTime = DateTime.fromJSDate(paginatedRange.from);
-      const toDateTime = DateTime.fromJSDate(paginatedRange.to);
+      const fromDateTime = DateTime.fromISO(paginatedRange.from).startOf('day');
+      const toDateTime = DateTime.fromISO(paginatedRange.to).endOf('day');
       inRangeLogs = allLogs.filter((log) => {
         const logDate = DateTime.fromJSDate(log.createdAt);
         return logDate <= toDateTime && logDate >= fromDateTime;

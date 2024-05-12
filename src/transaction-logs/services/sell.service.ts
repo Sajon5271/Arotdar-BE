@@ -7,6 +7,7 @@ import { SellLogs } from '../../schemas/sell-logs.schema';
 import { SellProductDTO } from '../dtos/sell-product.dto';
 import { ProductLotService } from './product-lot.service';
 import { CustomerType } from '../../enums/UserTypes.enum';
+import { TradingPartnersService } from '../../trading-partners/trading-partners.service';
 
 @Injectable()
 export class SellService {
@@ -16,6 +17,7 @@ export class SellService {
     @InjectModel(SellLogs.name) private readonly sellLogs: Model<SellLogs>,
     private inventoryService: InventoryService,
     private productLotService: ProductLotService,
+    private tradingPartnersService: TradingPartnersService,
   ) {}
 
   // TODO: Throw error if more quantity than possible is sent
@@ -68,6 +70,14 @@ export class SellService {
         remainingQuantity.map((el) => el._id),
       );
     });
+    if (info.partnerId) {
+      await this.tradingPartnersService.updatePartnerWithNewTransaction(
+        info.partnerId,
+        info.products.reduce((a, c) => a + c.quantityTraded, 0),
+        info.due,
+        info.paid,
+      );
+    }
     this.allSellLogsCache = undefined;
     return this.sellLogs.create({
       ...info,

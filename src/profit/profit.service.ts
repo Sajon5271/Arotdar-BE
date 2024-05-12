@@ -14,7 +14,7 @@ export class ProfitService {
     private readonly productLot: Model<ProductLotInfo>,
   ) {}
 
-  getProfitForRange(from: Date, to: Date): Promise<SellLogs[]> {
+  getProfitForRange(from: string, to: string): Promise<SellLogs[]> {
     return this.sellLogs
       .find({
         createdAt: { $gte: from, $lte: to },
@@ -53,8 +53,8 @@ export class ProfitService {
 
   async getProfitForCustomRange(range: DateRangeDto) {
     const allLogs = await this.getProfitForRange(range.from, range.to);
-    let fromDateTime = DateTime.fromJSDate(range.from);
-    const toDateTime = DateTime.fromJSDate(range.to);
+    let fromDateTime = DateTime.fromISO(range.from).startOf('day');
+    const toDateTime = DateTime.fromISO(range.to).endOf('day');
     const profitObjForDays = {};
     while (fromDateTime <= toDateTime) {
       profitObjForDays[fromDateTime.toFormat('D')] = null;
