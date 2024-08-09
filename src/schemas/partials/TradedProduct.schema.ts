@@ -19,9 +19,25 @@ export class TradedProduct {
 
 export const TradedProductSchema = SchemaFactory.createForClass(TradedProduct);
 
-export class SellTradeProduct extends TradedProduct {
+@Schema()
+export class BuyingPrices {
   @Prop({ required: true })
-  buyingPrices: { id: string; countSold: number; boughtPricePerUnit: number }[];
+  id: string;
+
+  @Prop({ required: true })
+  countSold: number;
+
+  @Prop({ required: true })
+  boughtPricePerUnit: number;
 }
+
+export const BuyingPricesSchema = SchemaFactory.createForClass(BuyingPrices);
+
+@Schema()
+export class SellTradeProduct extends TradedProduct {
+  @Prop({ required: true, type: [BuyingPricesSchema] })
+  buyingPrices: BuyingPrices[];
+}
+
 export const SellTradProductSchema =
   SchemaFactory.createForClass(SellTradeProduct);

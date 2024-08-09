@@ -172,7 +172,7 @@ export class TransactionLogsController {
   @Post('buy-product')
   @GenericObjectResponse(BuyLogs)
   @Roles(['admin', 'employee'])
-  buyProoduct(
+  buyProduct(
     @Body() transactionInfo: BuyProductDTO,
     @CurrentUser() user: PublicUserProperties,
   ) {
@@ -182,7 +182,7 @@ export class TransactionLogsController {
   @Post('sell-product')
   @GenericObjectResponse(SellLogs)
   @Roles(['admin', 'employee'])
-  sellProoduct(
+  sellProduct(
     @Body() transactionInfo: SellProductDTO,
     @CurrentUser() user: PublicUserProperties,
   ) {
