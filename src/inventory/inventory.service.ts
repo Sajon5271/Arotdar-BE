@@ -14,6 +14,7 @@ export class InventoryService {
     const productToCreate: Inventory = {
       currentPricePerUnit: product.currentPricePerUnit,
       lotIdsContainingProduct: [],
+      currentAvailableSuppliers: [],
       productName: product.productName,
       totalCurrentQuantity: product.totalCurrentQuantity || 0,
       productDescription: product.productDescription,
@@ -73,8 +74,10 @@ export class InventoryService {
     await product.save();
     return product;
   }
+
   async buyingMultipleInventory(
     products: { id: string; quantity: number; newLotId: string }[],
+    supplier: string,
   ): Promise<Inventory[]> {
     const productsToUpdate = await this.inventory.find({
       _id: { $in: products.map((el) => el.id) },
@@ -90,6 +93,7 @@ export class InventoryService {
       if (info.quantity) {
         product.totalCurrentQuantity += info.quantity;
         product.lotIdsContainingProduct.push(info.newLotId);
+        product.currentAvailableSuppliers.push(supplier);
       }
       promisesToSave.push(product.save());
     });
@@ -101,12 +105,14 @@ export class InventoryService {
     id: string,
     quantity: number,
     currentLotIdsRemaining: string[],
+    supplierIdsRemaining: string[],
   ): Promise<Inventory> {
     const product = await this.inventory.findById(id);
     if (!product) throw new NotFoundException('Product not found');
     if (quantity) {
       product.totalCurrentQuantity = quantity;
       product.lotIdsContainingProduct = currentLotIdsRemaining;
+      product.currentAvailableSuppliers = supplierIdsRemaining;
     }
     await product.save();
     return product;

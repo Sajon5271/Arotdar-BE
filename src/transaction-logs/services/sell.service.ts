@@ -68,6 +68,7 @@ export class SellService {
           0,
         ),
         remainingQuantity.map((el) => el._id),
+        remainingQuantity.map((el) => el.supplierId),
       );
     });
     if (info.partnerId) {

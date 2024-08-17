@@ -25,6 +25,10 @@ export class Inventory {
   @Prop({ required: true, default: [] })
   lotIdsContainingProduct: string[];
 
+  @ApiPropertyOptional()
+  @Prop({ required: true, default: [] })
+  currentAvailableSuppliers: string[];
+
   @ApiProperty()
   @Prop({ required: true })
   currentPricePerUnit: number;

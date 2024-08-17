@@ -20,6 +20,7 @@ export class ProductLotService {
   }
   async addMultipleNewLot(
     products: { productId: string; price: number; quantity: number }[],
+    supplierId: string,
   ) {
     return this.productLot.insertMany(
       products.map((p) => {
@@ -28,6 +29,7 @@ export class ProductLotService {
           buyingPrice: p.price,
           quantityBought: p.quantity,
           quantityRemaining: p.quantity,
+          supplierId,
         };
       }),
     );
@@ -40,6 +42,22 @@ export class ProductLotService {
         quantityRemaining: { $gt: 0 },
       })
       .sort('-createdAt');
+  }
+
+  async getProductCountForSupplier(
+    productId: string,
+    supplierId: string,
+  ): Promise<number> {
+    const allProductsForSupplier = await this.productLot.find({
+      lotProductId: productId,
+      supplierId,
+      quantityRemaining: { $gt: 0 },
+    });
+    if (!allProductsForSupplier) return 0;
+    return allProductsForSupplier.reduce(
+      (total, curr) => total + curr.quantityRemaining,
+      0,
+    );
   }
 
   async updateLotQuantity(id: string, newQuantity: number) {

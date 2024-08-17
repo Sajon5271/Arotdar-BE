@@ -1,24 +1,23 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ApiCookieAuth, ApiTags } from '@nestjs/swagger';
+import { CurrentUser } from '../decorators/CurrentUser.decorator';
 import { Roles } from '../decorators/roles/roles.decorator';
-import { InventoryLogs } from '../schemas/inventory-logs.schema';
 import { Inventory } from '../schemas/inventory.schema';
 import { ParamDto } from '../shared/dtos/param.dto';
 import {
   GenericArrayResponse,
   GenericObjectResponse,
 } from '../swagger/GenericResponseDecorator';
+import { ProductLotService } from '../transaction-logs/services/product-lot.service';
+import { PublicUserProperties } from '../users/public-user-properties';
+import { ProductAvailablityDto } from './dtos/product-availability.dto';
 import {
   ProductDto,
   UpdatePriceDto,
   UpdateProductDto,
 } from './dtos/product.dto';
 import { UpdateQuantityDto } from './dtos/update-quantity.dto';
-import { InventoryLogsService } from './inventory-logs.service';
 import { InventoryService } from './inventory.service';
-import { CurrentUser } from '../decorators/CurrentUser.decorator';
-import { User } from '../schemas/user.schema';
-import { PublicUserProperties } from '../users/public-user-properties';
 
 @ApiTags('Inventory Management')
 @ApiCookieAuth()
@@ -27,7 +26,7 @@ import { PublicUserProperties } from '../users/public-user-properties';
 export class InventoryController {
   constructor(
     private inventoryService: InventoryService,
-    private inventoryLogsService: InventoryLogsService,
+    private productLotService: ProductLotService,
   ) {}
 
   @Post('add-product')
@@ -37,6 +36,16 @@ export class InventoryController {
     @CurrentUser() user: PublicUserProperties,
   ) {
     return this.inventoryService.addNewProduct(productInfo);
+  }
+
+  @Post('product-available-count')
+  getProductCountForPartner(@Body() queries: ProductAvailablityDto) {
+    if (!queries.partnerId || !queries.productId) return 0;
+
+    return this.productLotService.getProductCountForSupplier(
+      queries.productId,
+      queries.partnerId,
+    );
   }
 
   @Get('all-products')

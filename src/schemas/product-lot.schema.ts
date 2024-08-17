@@ -25,6 +25,10 @@ export class ProductLotInfo {
   @Prop({ required: true })
   quantityRemaining: number;
 
+  @ApiProperty()
+  @Prop({ required: true })
+  supplierId: string;
+
   @ApiPropertyOptional()
   createdAt?: Date;
 
