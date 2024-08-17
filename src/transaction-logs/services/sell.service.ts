@@ -20,7 +20,6 @@ export class SellService {
     private tradingPartnersService: TradingPartnersService,
   ) {}
 
-  // TODO: Throw error if more quantity than possible is sent
   async sellProduct(info: SellProductDTO, userId: string) {
     const allLotsToUpdate = await this.productLotService.getLotForProducts(
       info.products.map((el) => el.productId),
@@ -30,6 +29,21 @@ export class SellService {
     const allProductNameMap = allProducts.reduce((acc, curr) => {
       return { ...acc, [curr._id]: curr.productName };
     }, {});
+
+    info.products.forEach((item) => {
+      const lotForProduct = allLotsToUpdate.filter(
+        (lot) => lot.lotProductId === item.productId,
+      );
+      if (
+        lotForProduct.reduce(
+          (total, curr) => total + curr.quantityRemaining,
+          0,
+        ) < item.quantityTraded
+      ) {
+        throw new Error('Not enough item available for sale');
+      }
+    });
+
     info.products.forEach((item) => {
       const lotForProduct = allLotsToUpdate.filter(
         (lot) => lot.lotProductId === item.productId,
