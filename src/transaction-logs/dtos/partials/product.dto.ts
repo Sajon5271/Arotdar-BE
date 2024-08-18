@@ -20,4 +20,7 @@ export class BuyProductInfoDTO extends OmitType(TradingProductDto, [
   'discount',
 ]) {}
 
-export class SellProductInfoDTO extends TradingProductDto {}
+export class SellProductInfoDTO extends TradingProductDto {
+  @IsMongoId({ message: 'Invalid supplier id provided' })
+  fromSupplier: string;
+}
