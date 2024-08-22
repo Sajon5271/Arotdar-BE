@@ -6,11 +6,18 @@ import {
 } from '../schemas/trading-partners.schema';
 import { TradingPartnersController } from './trading-partners.controller';
 import { TradingPartnersService } from './trading-partners.service';
+import {
+  ProductLotInfo,
+  ProductLotSchema,
+} from '../schemas/product-lot.schema';
+import { Inventory, InventorySchema } from '../schemas/inventory.schema';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: TradingPartner.name, schema: TradingPartnerSchema },
+      { name: ProductLotInfo.name, schema: ProductLotSchema },
+      { name: Inventory.name, schema: InventorySchema },
     ]),
   ],
   controllers: [TradingPartnersController],

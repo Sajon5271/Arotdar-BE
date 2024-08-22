@@ -3,6 +3,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { TradingPartner } from '../schemas/trading-partners.schema';
 import { Model } from 'mongoose';
 import { PartnerType } from '../enums/UserTypes.enum';
+import { ProductLotInfo } from '../schemas/product-lot.schema';
+import { Inventory } from '../schemas/inventory.schema';
 
 @Injectable()
 export class TradingPartnersService {
@@ -11,11 +13,17 @@ export class TradingPartnersService {
   constructor(
     @InjectModel(TradingPartner.name)
     private readonly tradingPartners: Model<TradingPartner>,
+    @InjectModel(ProductLotInfo.name)
+    private readonly lotInfo: Model<ProductLotInfo>,
+    @InjectModel(Inventory.name)
+    private readonly inventory: Model<Inventory>,
   ) {}
 
   async getAll(): Promise<TradingPartner[]> {
     if (!this.allTradingPartnersCache) {
-      this.allTradingPartnersCache = await this.tradingPartners.find({});
+      this.allTradingPartnersCache = (await this.tradingPartners.find({})).map(
+        (doc) => doc.toObject(),
+      );
     }
     return this.allTradingPartnersCache;
   }
@@ -57,6 +65,43 @@ export class TradingPartnersService {
     partner.totalCurrentDue += dueChange;
     await partner.save();
     return partner;
+  }
+
+  async getSupplierWithQuantities() {
+    const suppliers = await this.getType(PartnerType.Supplier);
+    const allProducts = await this.inventory.find();
+    const productInfoMap = allProducts.reduce<{
+      [key: string]: { productId: string; productName: string };
+    }>((acc, curr) => {
+      return {
+        ...acc,
+        [curr._id]: { productId: curr._id, productName: curr.productName },
+      };
+    }, {});
+    const lotsForSuppliersPromises = suppliers.map((el) => {
+      return this.lotInfo.find({
+        supplierId: el._id,
+        // quantityRemaining: { $gt: 0 },
+      });
+    });
+    const allLotData = await Promise.all(lotsForSuppliersPromises);
+
+    return allLotData.map((lot, idx) => {
+      return {
+        ...suppliers[idx],
+        productCurrentStock: Object.entries(
+          lot.reduce<{ [key: string]: number }>((acc, curr) => {
+            return {
+              ...acc,
+              [curr.lotProductId]:
+                (acc[curr.lotProductId] || 0) + curr.quantityRemaining,
+            };
+          }, {}),
+        ).map(([id, count]) => {
+          return { ...productInfoMap[id], count };
+        }),
+      };
+    });
   }
 
   async updatePartnerWithNewTransaction(

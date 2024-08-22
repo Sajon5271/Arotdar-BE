@@ -125,6 +125,12 @@ export class TradingPartnersController {
     }
   }
 
+  @Get('suppliers-with-product-info')
+  @Roles(['admin', 'employee', 'superadmin'])
+  getSuppliersWithProductInfo() {
+    return this.tradingPartnersService.getSupplierWithQuantities();
+  }
+
   @Post('add-partner')
   @GenericObjectResponse(TradingPartner)
   @Roles(['admin'])
