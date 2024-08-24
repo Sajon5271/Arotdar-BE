@@ -50,6 +50,14 @@ export class GenericInterceptor<T>
       [RequestMethod.PUT]: HttpStatus.OK,
       [RequestMethod.DELETE]: HttpStatus.OK,
     };
+    if (
+      context
+        .switchToHttp()
+        .getRequest()
+        .originalUrl.includes('/transaction/generate-receipt')
+    ) {
+      return next.handle();
+    }
     return next.handle().pipe(
       map((Data: T) => {
         return {

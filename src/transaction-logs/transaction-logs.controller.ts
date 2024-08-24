@@ -3,8 +3,10 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Post,
   Query,
+  StreamableFile,
 } from '@nestjs/common';
 import { ApiCookieAuth, ApiTags } from '@nestjs/swagger';
 import { DateTime } from 'luxon';
@@ -27,6 +29,8 @@ import { PaginatedRangeDTO } from './dtos/paginated-range.dto';
 import { IsMongoId } from 'class-validator';
 import { readFile } from 'fs/promises';
 import path from 'path';
+import Handlebars from 'handlebars';
+import puppeteer from 'puppeteer';
 
 @ApiTags('Transactions')
 @ApiCookieAuth()
@@ -209,17 +213,53 @@ export class TransactionLogsController {
     return this.transactionLogsService.addDueUpdateTransaction(data, user._id);
   }
 
-  @Get('generate-receipt')
+  @Get('generate-receipt/:id')
   @Roles(['admin', 'employee', 'superadmin'])
-  async getReceipt(@Query() query: { id: string }) {
+  async getReceipt(@Param() param: { id: string }) {
     try {
-      const sellLog = await this.sellService.getById(query.id);
+      const sellLog = await this.sellService.getById(param.id);
       console.log(__dirname);
       const fileToSend = await readFile(
-        path.join(__dirname, '../../static/receipt.hbs'),
+        path.join(__dirname, '../static/receipt.hbs'),
         'utf-8',
       );
-      return fileToSend;
+      const productsInfo = sellLog.products.map((el, idx) => ({
+        serial: idx + 1,
+        name: el.productName,
+        quantity: el.quantityTraded,
+        pricePerUnit: el.pricePerUnit,
+        total: el.quantityTraded * el.pricePerUnit,
+      }));
+      const totalDiscount = sellLog.products.reduce(
+        (acc, curr) => acc + (curr.discount || 0),
+        0,
+      );
+      const totalPrice =
+        productsInfo.reduce((acc, curr) => acc + curr.total, 0) +
+        (sellLog.deliveryCharge || 0);
+      const template = Handlebars.compile(fileToSend);
+      const comiledHtml = template({
+        sellId: sellLog._id,
+        customerName: sellLog.partnerName,
+        customerAddress: '',
+        customerPhoneNumber: '',
+        product: productsInfo,
+        deliveryCharge: sellLog.deliveryCharge || 0,
+        totalAmount: totalPrice,
+        totalDiscount,
+        totalDiscountedPrice: totalPrice - totalDiscount,
+        totalPaid: sellLog.paid,
+        due: sellLog.due,
+      });
+      const browser = await puppeteer.launch({
+        args: ['--no-sandbox'],
+        headless: true,
+      });
+      const newPage = await browser.newPage();
+      await newPage.setContent(comiledHtml);
+      const pdf = await newPage.pdf({ format: 'A4' });
+      await browser.close();
+      return new StreamableFile(pdf, { type: 'application/pdf' });
     } catch (error) {
       console.log(error);
       throw new BadRequestException('Invalid sell log id');

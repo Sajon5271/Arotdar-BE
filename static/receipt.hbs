@@ -6,13 +6,22 @@
             <div>demo contact number</div>
         </div>
         <div style="width: 400px; display: flex; flex-direction: column; gap: 8px;">
-            <div style="display: flex; align-items: center;"><div style="width: 120px; font-weight: bold;">Customer Name </div><div>: &ensp; Demo Customer Name</div></div>
-            <div style="display: flex; align-items: center;"><div style="width: 120px; font-weight: bold;">Address </div><div>: &ensp; Demo Customer Address</div></div>
-            <div style="display: flex; align-items: center;"><div style="width: 120px; font-weight: bold;">Phone Number </div><div>: &ensp; Demo Customer Phone no</div></div>
+            <div style="display: flex; align-items: center;">
+                <div style="width: 120px; font-weight: bold;">Customer Name </div>
+                <div>: &ensp; {{customerName}}</div>
+            </div>
+            <div style="display: flex; align-items: center;">
+                <div style="width: 120px; font-weight: bold;">Address </div>
+                <div>: &ensp; {{customerAddress}}</div>
+            </div>
+            <div style="display: flex; align-items: center;">
+                <div style="width: 120px; font-weight: bold;">Phone Number </div>
+                <div>: &ensp; {{customerPhoneNumber}}</div>
+            </div>
         </div>
     </div>
     <div style="padding: 0 32px;">
-        Reciept no:
+        Reciept no: {{sellId}}
     </div>
     <div style="padding: 32px;">
         <table style="width: 100%; border-collapse: collapse;">
@@ -23,29 +32,54 @@
                 <th style="border: 1px solid #424242;">Rate</th>
                 <th style="border: 1px solid #424242;">Amount</th>
             </tr>
+            {{#each product}}
             <tr>
-                <td style="text-align: center; border: 1px solid #424242;">1</td>
-                <td style="text-align: center; border: 1px solid #424242;">miniket</td>
-                <td style="text-align: center; border: 1px solid #424242;">3</td>
-                <td style="text-align: center; border: 1px solid #424242;">500</td>
-                <td style="text-align: center; border: 1px solid #424242;">1500</td>
+                <td style="text-align: center; border: 1px solid #424242;">{{ this.serial }}</td>
+                <td style="text-align: center; border: 1px solid #424242;">{{this.name}}</td>
+                <td style="text-align: center; border: 1px solid #424242;">{{this.quantity}}</td>
+                <td style="text-align: center; border: 1px solid #424242;">{{this.pricePerUnit}}</td>
+                <td style="text-align: center; border: 1px solid #424242;">{{this.total}}</td>
             </tr>
-            <tr>
-                <td style="text-align: center; border: 1px solid #424242;">2</td>
-                <td style="text-align: center; border: 1px solid #424242;">miniket</td>
-                <td style="text-align: center; border: 1px solid #424242;">3</td>
-                <td style="text-align: center; border: 1px solid #424242;">500</td>
-                <td style="text-align: center; border: 1px solid #424242;">1500</td>
-            </tr>
+            {{/each}}
         </table>
     </div>
     <div style="width: 100%; display: flex; flex-direction: column; align-items: flex-end;gap: 8px;">
-        <div style="margin-right: 32px; display: flex; align-items: center;"><div>Delivery Charge:</div><div style="width: 100px; border: 1px solid #424242; padding: 2px 8px; margin-left: 8px; text-align: center;">60</div></div>
-        <div style="margin-right: 32px; display: flex; align-items: center;"><div>Total Amount:</div><div style="width: 100px; border: 1px solid #424242; padding: 2px 8px; margin-left: 8px; text-align: center;">3000</div></div>
-        <div style="margin-right: 32px; display: flex; align-items: center;"><div>Discount:</div><div style="width: 100px; border: 1px solid #424242; padding: 2px 8px; margin-left: 8px; text-align: center;">50</div></div>
-        <div style="margin-right: 32px; display: flex; align-items: center;"><div>Payable Amount:</div><div style="width: 100px; border: 1px solid #424242; padding: 2px 8px; margin-left: 8px; text-align: center;">2950</div></div>
-        <div style="margin-right: 32px; display: flex; align-items: center;"><div>Paid:</div><div style="width: 100px; border: 1px solid #424242; padding: 2px 8px; margin-left: 8px; text-align: center;">2800</div></div>
-        <div style="margin-right: 32px; display: flex; align-items: center;"><div>Due:</div><div style="width: 100px; border: 1px solid #424242; padding: 2px 8px; margin-left: 8px; text-align: center;">150</div></div>
+        <div style="margin-right: 32px; display: flex; align-items: center;">
+            <div>Delivery Charge:</div>
+            <div
+                style="width: 100px; border: 1px solid #424242; padding: 2px 8px; margin-left: 8px; text-align: center;">
+                {{deliveryCharge}}</div>
+        </div>
+        <div style="margin-right: 32px; display: flex; align-items: center;">
+            <div>Total Amount:</div>
+            <div
+                style="width: 100px; border: 1px solid #424242; padding: 2px 8px; margin-left: 8px; text-align: center;">
+                {{totalAmount}}</div>
+        </div>
+        <div style="margin-right: 32px; display: flex; align-items: center;">
+            <div>Discount:</div>
+            <div
+                style="width: 100px; border: 1px solid #424242; padding: 2px 8px; margin-left: 8px; text-align: center;">
+                {{totalDiscount}}</div>
+        </div>
+        <div style="margin-right: 32px; display: flex; align-items: center;">
+            <div>Payable Amount:</div>
+            <div
+                style="width: 100px; border: 1px solid #424242; padding: 2px 8px; margin-left: 8px; text-align: center;">
+                {{totalDiscountedPrice}}</div>
+        </div>
+        <div style="margin-right: 32px; display: flex; align-items: center;">
+            <div>Paid:</div>
+            <div
+                style="width: 100px; border: 1px solid #424242; padding: 2px 8px; margin-left: 8px; text-align: center;">
+                {{totalPaid}}</div>
+        </div>
+        <div style="margin-right: 32px; display: flex; align-items: center;">
+            <div>Due:</div>
+            <div
+                style="width: 100px; border: 1px solid #424242; padding: 2px 8px; margin-left: 8px; text-align: center;">
+                {{due}}</div>
+        </div>
     </div>
     <div style="margin-top: 200px; display: flex; align-items: flex-start; justify-content: space-between;">
         <div style="margin-left: 32px; border-top: 1px solid; border-top-style: dashed;">Customer's Signature</div>
