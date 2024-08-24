@@ -1,4 +1,11 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { ApiCookieAuth, ApiTags } from '@nestjs/swagger';
 import { DateTime } from 'luxon';
 import { CurrentUser } from '../decorators/CurrentUser.decorator';
@@ -17,6 +24,9 @@ import { BuyService } from './services/buy.service';
 import { SellService } from './services/sell.service';
 import { TransactionLogsService } from './transaction-logs.service';
 import { PaginatedRangeDTO } from './dtos/paginated-range.dto';
+import { IsMongoId } from 'class-validator';
+import { readFile } from 'fs/promises';
+import path from 'path';
 
 @ApiTags('Transactions')
 @ApiCookieAuth()
@@ -197,5 +207,22 @@ export class TransactionLogsController {
     @CurrentUser() user: PublicUserProperties,
   ) {
     return this.transactionLogsService.addDueUpdateTransaction(data, user._id);
+  }
+
+  @Get('generate-receipt')
+  @Roles(['admin', 'employee', 'superadmin'])
+  async getReceipt(@Query() query: { id: string }) {
+    try {
+      const sellLog = await this.sellService.getById(query.id);
+      console.log(__dirname);
+      const fileToSend = await readFile(
+        path.join(__dirname, '../../static/receipt.hbs'),
+        'utf-8',
+      );
+      return fileToSend;
+    } catch (error) {
+      console.log(error);
+      throw new BadRequestException('Invalid sell log id');
+    }
   }
 }
