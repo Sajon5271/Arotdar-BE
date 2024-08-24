@@ -47,6 +47,11 @@ export class SellProductDTO {
   paid: number;
 
   @ApiProperty()
+  @IsNumber({}, { message: 'Delivery Charge must be a number' })
+  @IsOptional()
+  deliveryCharge?: number;
+
+  @ApiProperty()
   @IsNumber({}, { message: 'Final price must be a number' })
   finalPrice: number;
 }

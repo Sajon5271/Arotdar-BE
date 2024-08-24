@@ -67,6 +67,10 @@ export class SellLogs {
   paid: number;
 
   @ApiProperty()
+  @Prop()
+  deliveryCharge?: number;
+
+  @ApiProperty()
   @Prop({ required: true })
   finalPrice: number;
 

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { InventoryService } from '../../inventory/inventory.service';
@@ -40,7 +40,7 @@ export class SellService {
           0,
         ) < item.quantityTraded
       ) {
-        throw new Error('Not enough item available for sale');
+        throw new BadRequestException('Not enough item available for sale');
       }
     });
 
@@ -53,7 +53,7 @@ export class SellService {
       for (const lot of lotForProduct) {
         if (!productRemainingToCalc) break;
         const newQuantity =
-          productRemainingToCalc < lot.quantityRemaining
+          productRemainingToCalc <= lot.quantityRemaining
             ? lot.quantityRemaining - productRemainingToCalc
             : 0;
         productRemainingToCalc =
