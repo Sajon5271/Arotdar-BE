@@ -5,8 +5,6 @@ import { CustomerType } from '../enums/UserTypes.enum';
 import {
   SellTradProductSchema,
   SellTradeProduct,
-  TradedProduct,
-  TradedProductSchema,
 } from './partials/TradedProduct.schema';
 
 export type SellLogModel = HydratedDocument<SellLogs>;
@@ -73,6 +71,10 @@ export class SellLogs {
   @ApiProperty()
   @Prop({ required: true })
   finalPrice: number;
+
+  @ApiPropertyOptional()
+  @Prop()
+  serial?: number;
 
   @ApiPropertyOptional()
   createdAt?: Date;

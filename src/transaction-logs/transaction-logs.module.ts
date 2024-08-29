@@ -23,8 +23,23 @@ import { TransactionLogsService } from './transaction-logs.service';
     MongooseModule.forFeature([
       { name: TransactionLogs.name, schema: TransactionLogSchema },
       { name: BuyLogs.name, schema: BuyLogsSchema },
-      { name: SellLogs.name, schema: SellLogSchema },
       { name: ProductLotInfo.name, schema: ProductLotSchema },
+    ]),
+    MongooseModule.forFeatureAsync([
+      {
+        name: SellLogs.name,
+        useFactory: () => {
+          const schema = SellLogSchema;
+          schema.pre('save', {}, async function () {
+            const latestDocWithSerial = await this.model()
+              .find({})
+              .sort('-serial')
+              .limit(1);
+            this.serial = (latestDocWithSerial[0]?.serial || 0) + 1;
+          });
+          return schema;
+        },
+      },
     ]),
     InventoryModule,
     TradingPartnersModule,

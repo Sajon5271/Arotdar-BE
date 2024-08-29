@@ -32,26 +32,32 @@ export class SellService {
 
     info.products.forEach((item) => {
       const lotForProduct = allLotsToUpdate.filter(
-        (lot) => lot.lotProductId === item.productId,
+        (lot) =>
+          lot.lotProductId === item.productId &&
+          lot.supplierId === item.fromSupplier,
       );
-      if (
-        lotForProduct.reduce(
-          (total, curr) => total + curr.quantityRemaining,
-          0,
-        ) < item.quantityTraded
-      ) {
+      const currentQuantity = lotForProduct.reduce(
+        (total, curr) => total + curr.quantityRemaining,
+        0,
+      );
+      if (currentQuantity < item.quantityTraded) {
         throw new BadRequestException('Not enough item available for sale');
       }
     });
 
     info.products.forEach((item) => {
       const lotForProduct = allLotsToUpdate.filter(
-        (lot) => lot.lotProductId === item.productId,
+        (lot) =>
+          lot.lotProductId === item.productId &&
+          lot.supplierId === item.fromSupplier,
       );
       let productRemainingToCalc = item.quantityTraded;
       const buyingPrices = [];
       for (const lot of lotForProduct) {
-        if (!productRemainingToCalc) break;
+        if (!productRemainingToCalc) {
+          // console.log('No product to');
+          break;
+        }
         const newQuantity =
           productRemainingToCalc <= lot.quantityRemaining
             ? lot.quantityRemaining - productRemainingToCalc

@@ -218,7 +218,7 @@ export class TransactionLogsController {
   async getReceipt(@Param() param: { id: string }) {
     try {
       const sellLog = await this.sellService.getById(param.id);
-      console.log(__dirname);
+      if (!sellLog) throw new Error();
       const fileToSend = await readFile(
         path.join(__dirname, '../static/receipt.hbs'),
         'utf-8',
@@ -239,7 +239,7 @@ export class TransactionLogsController {
         (sellLog.deliveryCharge || 0);
       const template = Handlebars.compile(fileToSend);
       const comiledHtml = template({
-        sellId: sellLog._id,
+        sellId: (sellLog.serial || 0).toString().padStart(4, '0'),
         customerName: sellLog.partnerName,
         customerAddress: '',
         customerPhoneNumber: '',
