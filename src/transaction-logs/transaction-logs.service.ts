@@ -69,7 +69,7 @@ export class TransactionLogsService {
         partner.partnerType === PartnerType.Customer
           ? CustomerType.Regular
           : undefined,
-      partnerId: partner._id,
+      partnerId: partner._id.toString(),
       partnerName: partner.name,
       quantityTraded: 0,
       pricePerUnit: 0,

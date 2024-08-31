@@ -39,7 +39,7 @@ export class BuyService {
       return {
         id: el.lotProductId,
         quantity: el.quantityBought,
-        newLotId: el._id,
+        newLotId: el._id.toString(),
       };
     });
     await this.inventoryService.buyingMultipleInventory(

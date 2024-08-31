@@ -45,6 +45,7 @@ export class SellService {
       }
     });
 
+    const updateLotPromises = [];
     info.products.forEach((item) => {
       const lotForProduct = allLotsToUpdate.filter(
         (lot) =>
@@ -55,7 +56,6 @@ export class SellService {
       const buyingPrices = [];
       for (const lot of lotForProduct) {
         if (!productRemainingToCalc) {
-          // console.log('No product to');
           break;
         }
         const newQuantity =
@@ -65,32 +65,25 @@ export class SellService {
         productRemainingToCalc =
           productRemainingToCalc - (lot.quantityRemaining - newQuantity);
         buyingPrices.push({
-          id: lot._id,
+          id: lot._id.toString(),
           countSold: lot.quantityRemaining - newQuantity,
           boughtPricePerUnit: lot.buyingPrice,
         });
-        if (newQuantity !== lot.quantityRemaining)
-          this.productLotService.updateLotQuantity(lot._id, newQuantity);
+        if (newQuantity !== lot.quantityRemaining) {
+          updateLotPromises.push(
+            this.productLotService.updateLotQuantity(lot._id, newQuantity),
+          );
+        }
         lot.quantityRemaining = newQuantity;
       }
-      const remainingQuantity = lotForProduct.filter(
-        (el) => el.quantityRemaining > 0,
-      );
       productsToSave.push({
         ...item,
         productName: allProductNameMap[item.productId],
         buyingPrices,
       });
-      this.inventoryService.sellingInventory(
-        item.productId,
-        remainingQuantity.reduce(
-          (acc, curr) => acc + curr.quantityRemaining,
-          0,
-        ),
-        remainingQuantity.map((el) => el._id),
-        remainingQuantity.map((el) => el.supplierId),
-      );
     });
+    await Promise.all(updateLotPromises);
+    await this.inventoryService.syncWithLots();
     if (info.partnerId) {
       await this.tradingPartnersService.updatePartnerWithNewTransaction(
         info.partnerId,

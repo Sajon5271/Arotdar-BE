@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  InternalServerErrorException,
+  Param,
+  Post,
+} from '@nestjs/common';
 import { ApiCookieAuth, ApiTags } from '@nestjs/swagger';
 import { CurrentUser } from '../decorators/CurrentUser.decorator';
 import { Roles } from '../decorators/roles/roles.decorator';
@@ -6,6 +14,7 @@ import { Inventory } from '../schemas/inventory.schema';
 import { ParamDto } from '../shared/dtos/param.dto';
 import {
   GenericArrayResponse,
+  GenericNullResponse,
   GenericObjectResponse,
 } from '../swagger/GenericResponseDecorator';
 import { ProductLotService } from '../transaction-logs/services/product-lot.service';
@@ -90,6 +99,17 @@ export class InventoryController {
       param.id,
       data.currentPricePerUnit,
     );
+  }
+
+  @Get('sync-with-lots')
+  @GenericNullResponse()
+  async syncWithLots() {
+    try {
+      await this.inventoryService.syncWithLots();
+      return null;
+    } catch (error) {
+      return new InternalServerErrorException('Could not sync with lots');
+    }
   }
 
   // @Get('product-history/:id')

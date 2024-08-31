@@ -1,13 +1,16 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Inventory } from '../schemas/inventory.schema';
+import { Inventory, UpdateInventory } from '../schemas/inventory.schema';
 import { ProductDto, UpdateProductDto } from './dtos/product.dto';
+import { ProductLotInfo } from '../schemas/product-lot.schema';
 
 @Injectable()
 export class InventoryService {
   constructor(
     @InjectModel(Inventory.name) private readonly inventory: Model<Inventory>,
+    @InjectModel(ProductLotInfo.name)
+    private readonly productLot: Model<ProductLotInfo>,
   ) {}
 
   async addNewProduct(product: ProductDto): Promise<Inventory> {
@@ -33,12 +36,12 @@ export class InventoryService {
 
   async updateProduct(
     id: string,
-    updatedValues: UpdateProductDto,
+    updatedValues: UpdateInventory,
   ): Promise<Inventory> {
     try {
       const product = await this.inventory.findById(id);
       if (!product) throw new Error();
-      for (const key in Object.keys(updatedValues)) {
+      for (const key of Object.keys(updatedValues)) {
         product[key] = updatedValues[key];
       }
       await product.save();
@@ -120,5 +123,44 @@ export class InventoryService {
 
   async updatePrice(id: string, newPrice: number): Promise<Inventory> {
     return await this.updateProduct(id, { currentPricePerUnit: newPrice });
+  }
+
+  async syncWithLots() {
+    const allLots = await this.productLot.find({
+      quantityRemaining: { $gt: 0 },
+    });
+    const allProducts = await this.getAllProduct();
+
+    const inventoryUpdateMap = new Map<string, UpdateInventory>();
+    allLots.forEach((lot) => {
+      const currentMapVal = inventoryUpdateMap.get(lot.lotProductId);
+      if (currentMapVal) {
+        currentMapVal.totalCurrentQuantity += lot.quantityRemaining;
+        currentMapVal.lotIdsContainingProduct.push(lot._id.toString());
+        if (!currentMapVal.currentAvailableSuppliers.includes(lot.supplierId)) {
+          currentMapVal.currentAvailableSuppliers.push(lot.supplierId);
+        }
+      } else {
+        inventoryUpdateMap.set(lot.lotProductId, {
+          totalCurrentQuantity: lot.quantityRemaining,
+          lotIdsContainingProduct: [lot._id.toString()],
+          currentAvailableSuppliers: [lot.supplierId],
+        });
+      }
+    });
+    const inventoryUpdatePromises = [];
+    allProducts.forEach((val) => {
+      inventoryUpdatePromises.push(
+        this.updateProduct(
+          val._id,
+          inventoryUpdateMap.get(val._id.toString()) || {
+            currentAvailableSuppliers: [],
+            lotIdsContainingProduct: [],
+            totalCurrentQuantity: 0,
+          },
+        ),
+      );
+    });
+    await Promise.all(inventoryUpdatePromises);
   }
 }

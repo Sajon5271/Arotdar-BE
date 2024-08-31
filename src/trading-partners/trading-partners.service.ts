@@ -75,13 +75,16 @@ export class TradingPartnersService {
     }>((acc, curr) => {
       return {
         ...acc,
-        [curr._id]: { productId: curr._id, productName: curr.productName },
+        [curr._id.toString()]: {
+          productId: curr._id.toString(),
+          productName: curr.productName,
+        },
       };
     }, {});
     const lotsForSuppliersPromises = suppliers.map((el) => {
       return this.lotInfo.find({
-        supplierId: el._id,
-        // quantityRemaining: { $gt: 0 },
+        supplierId: el._id.toString(),
+        quantityRemaining: { $gt: 0 },
       });
     });
     const allLotData = await Promise.all(lotsForSuppliersPromises);

@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
 import { HydratedDocument } from 'mongoose';
 
 export type InventoryModel = HydratedDocument<Inventory>;
@@ -39,5 +39,7 @@ export class Inventory {
   @ApiPropertyOptional()
   updatedAt?: Date;
 }
+
+export class UpdateInventory extends PartialType(Inventory) {}
 
 export const InventorySchema = SchemaFactory.createForClass(Inventory);
