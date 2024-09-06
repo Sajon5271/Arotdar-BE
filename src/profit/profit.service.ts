@@ -26,7 +26,7 @@ export class ProfitService {
     const allLogs = await this.getProfitForRange(range.from, range.to);
     const monthProfitObj = {};
     let currTime = DateTime.now().startOf('year');
-    while (currTime > currTime.endOf('year')) {
+    while (currTime < DateTime.now().endOf('year')) {
       monthProfitObj[currTime.toFormat('LLL')] = null;
       currTime = currTime.plus({ month: 1 });
     }
@@ -47,7 +47,6 @@ export class ProfitService {
       monthProfitObj[sellMonth] =
         monthProfitObj[sellMonth] || 0 + profitForSell;
     });
-
     return Object.values<number>(monthProfitObj);
   }
 
@@ -60,7 +59,6 @@ export class ProfitService {
       profitObjForDays[fromDateTime.toFormat('D')] = null;
       fromDateTime = fromDateTime.plus({ day: 1 });
     }
-
     allLogs.forEach((sell) => {
       const profitForSell = sell.products.reduce((acc, curr) => {
         const buyingPrice = curr.buyingPrices.reduce((a, c) => {
