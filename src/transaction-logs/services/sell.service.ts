@@ -11,8 +11,6 @@ import { TradingPartnersService } from '../../trading-partners/trading-partners.
 
 @Injectable()
 export class SellService {
-  allSellLogsCache: SellLogs[] | undefined;
-
   constructor(
     @InjectModel(SellLogs.name) private readonly sellLogs: Model<SellLogs>,
     private inventoryService: InventoryService,
@@ -92,7 +90,6 @@ export class SellService {
         info.paid,
       );
     }
-    this.allSellLogsCache = undefined;
     return this.sellLogs.create({
       ...info,
       customerType: info.partnerId ? CustomerType.Regular : CustomerType.Normal,
@@ -104,13 +101,8 @@ export class SellService {
 
   async getAll(sortBy: string = '-createdAt'): Promise<SellLogs[]> {
     try {
-      // TODO: Take care of sorting while caching
-      if (!this.allSellLogsCache) {
-        this.allSellLogsCache = await this.sellLogs.find({}).sort(sortBy);
-      }
-      return this.allSellLogsCache;
+      return await this.sellLogs.find({}).sort(sortBy);
     } catch (error) {
-      this.allSellLogsCache = undefined;
       throw error;
     }
   }

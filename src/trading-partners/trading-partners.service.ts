@@ -8,8 +8,6 @@ import { Inventory } from '../schemas/inventory.schema';
 
 @Injectable()
 export class TradingPartnersService {
-  allTradingPartnersCache: TradingPartner[] | undefined;
-
   constructor(
     @InjectModel(TradingPartner.name)
     private readonly tradingPartners: Model<TradingPartner>,
@@ -20,12 +18,7 @@ export class TradingPartnersService {
   ) {}
 
   async getAll(): Promise<TradingPartner[]> {
-    if (!this.allTradingPartnersCache) {
-      this.allTradingPartnersCache = (await this.tradingPartners.find({})).map(
-        (doc) => doc.toObject(),
-      );
-    }
-    return this.allTradingPartnersCache;
+    return (await this.tradingPartners.find({})).map((doc) => doc.toObject());
   }
   async getPartnerById(id: string): Promise<TradingPartner> {
     return await this.tradingPartners.findById(id);
@@ -36,7 +29,6 @@ export class TradingPartnersService {
   }
 
   async addPartner(partnerDetails: Partial<TradingPartner>) {
-    this.allTradingPartnersCache = undefined;
     const newPartner = new this.tradingPartners({
       ...partnerDetails,
       totalCurrentDue: 0,
@@ -49,7 +41,6 @@ export class TradingPartnersService {
   }
 
   async updatePartner(id: string, partnerDetails: Partial<TradingPartner>) {
-    this.allTradingPartnersCache = undefined;
     const updatedPartner = await this.tradingPartners.findByIdAndUpdate(
       id,
       partnerDetails,
@@ -59,7 +50,6 @@ export class TradingPartnersService {
   }
 
   async updatePartnerDue(id: string, dueChange: number) {
-    this.allTradingPartnersCache = undefined;
     const partner = await this.tradingPartners.findById(id);
     if (!partner) throw new NotFoundException('Partner not found');
     partner.totalCurrentDue += dueChange;
@@ -113,7 +103,6 @@ export class TradingPartnersService {
     newDueAmount: number,
     newPaidAmount: number,
   ) {
-    this.allTradingPartnersCache = undefined;
     const partner = await this.tradingPartners.findById(id);
     if (!partner) throw new NotFoundException('Partner not found');
     partner.totalCurrentDue += newDueAmount;
@@ -125,7 +114,6 @@ export class TradingPartnersService {
   }
 
   async deletePartner(id: string) {
-    this.allTradingPartnersCache = undefined;
     try {
       await this.tradingPartners.findByIdAndDelete(id);
     } catch (err) {

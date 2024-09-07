@@ -103,7 +103,6 @@ export class TradingPartnersController {
       const allSuppliers = await this.tradingPartnersService.getType(
         PartnerType.Supplier,
       );
-
       const res = allSuppliers
         .toSorted((a, b) => {
           // TODO: Need to implement sorting
