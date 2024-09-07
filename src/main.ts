@@ -19,16 +19,9 @@ async function bootstrap() {
       stopAtFirstError: true,
     }),
   );
-  app.use('trust proxy', true);
   app.use(
     cookieSession({
       secret: process.env.COOKIE_SECRET,
-      secure: true,
-      secureProxy: true,
-      sameSite: 'none',
-      domain: 'arotdar-fe.vercel.app',
-      httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000 * 30,
     }),
   );
 
