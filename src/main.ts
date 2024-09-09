@@ -26,7 +26,8 @@ async function bootstrap() {
   app.use(
     cookieSession({
       secret: process.env.COOKIE_SECRET,
-      sameSite: 'lax',
+      sameSite: 'none',
+      secure: true,
     }),
   );
 
