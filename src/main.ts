@@ -8,7 +8,11 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.enableCors({
-    origin: ['http://localhost:4200', 'https://arotdar-fe.vercel.app'],
+    origin: [
+      'http://localhost:4200',
+      'https://arotdar-fe.vercel.app',
+      'https://arotdar-fe.fly.dev',
+    ],
     credentials: true,
   });
 
@@ -23,7 +27,7 @@ async function bootstrap() {
     cookieSession({
       secret: process.env.COOKIE_SECRET,
       sameSite: 'strict',
-      domain: 'arotdar-be.fly.dev',
+      domain: '.fly.dev',
     }),
   );
 
