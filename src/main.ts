@@ -26,9 +26,9 @@ async function bootstrap() {
   app.use(
     cookieSession({
       secret: process.env.COOKIE_SECRET,
-      secure: true,
-      sameSite: 'none',
       httpOnly: true,
+      domain: 'fly.dev',
+      path: '/',
     }),
   );
 
