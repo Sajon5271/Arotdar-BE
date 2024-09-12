@@ -3,10 +3,18 @@ import { NestFactory } from '@nestjs/core';
 import cookieSession from 'cookie-session';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-
+  console.log('================================================');
+  console.log('');
+  console.log('');
+  console.log('process.env.NODE_ENV: ' + process.env.NODE_ENV);
+  console.log('');
+  console.log('');
+  console.log('================================================');
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  app.set('trust proxy', 1);
   app.enableCors({
     origin: [
       'http://localhost:4200',
@@ -27,8 +35,8 @@ async function bootstrap() {
     cookieSession({
       secret: process.env.COOKIE_SECRET,
       httpOnly: true,
-      domain: 'fly.dev',
-      path: '/',
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'none',
     }),
   );
 
