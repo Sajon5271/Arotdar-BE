@@ -10,10 +10,10 @@ COPY . .
 # ENV DATABASE_URL=''
 # ENV COOKIE_SECRET=''
 # ENV JWT_SECRET=''
-ENV NODE_ENV='production'
 # ------------------------------------------------------------
 RUN npm install
 RUN npm run build
 RUN npx puppeteer browsers install chrome
+ENV NODE_ENV='production'
 CMD [ "npm", "run", "start:prod" ] 
 EXPOSE 3000
