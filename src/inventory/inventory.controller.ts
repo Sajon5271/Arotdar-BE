@@ -59,6 +59,7 @@ export class InventoryController {
 
   @Get('all-products')
   @GenericArrayResponse(Inventory)
+  @Roles(['admin', 'superadmin', 'employee'])
   getAllProducts() {
     return this.inventoryService.getAllProduct();
   }

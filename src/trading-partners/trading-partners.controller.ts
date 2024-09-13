@@ -95,7 +95,7 @@ export class TradingPartnersController {
 
   @Get('suppliers')
   @GenericArrayResponse(TradingPartner)
-  @Roles(['admin'])
+  @Roles(['admin', 'employee'])
   async getAllSuppliers(
     @Query() paginatedQuery: PaginationDto,
   ): Promise<PaginatedResults<TradingPartner>> {
