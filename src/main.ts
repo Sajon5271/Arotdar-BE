@@ -6,13 +6,6 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
-  console.log('================================================');
-  console.log('');
-  console.log('');
-  console.log('process.env.NODE_ENV: ' + process.env.NODE_ENV);
-  console.log('');
-  console.log('');
-  console.log('================================================');
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.set('trust proxy', 1);
   app.enableCors({
@@ -36,7 +29,7 @@ async function bootstrap() {
       secret: process.env.COOKIE_SECRET,
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'none',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
     }),
   );
 

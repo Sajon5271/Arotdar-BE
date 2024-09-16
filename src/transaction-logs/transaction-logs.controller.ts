@@ -30,7 +30,7 @@ import { IsMongoId } from 'class-validator';
 import { readFile } from 'fs/promises';
 import path from 'path';
 import Handlebars from 'handlebars';
-import puppeteer from 'puppeteer';
+import puppeteer from 'puppeteer-core';
 
 @ApiTags('Transactions')
 @ApiCookieAuth()
@@ -218,7 +218,7 @@ export class TransactionLogsController {
   async getReceipt(@Param() param: { id: string }) {
     try {
       const sellLog = await this.sellService.getById(param.id);
-      if (!sellLog) throw new Error();
+      if (!sellLog) throw new Error('No sell log found');
       const fileToSend = await readFile(
         path.join(__dirname, '../static/receipt.hbs'),
         'utf-8',
@@ -251,8 +251,17 @@ export class TransactionLogsController {
         totalPaid: sellLog.paid,
         due: sellLog.due,
       });
+      if (!process.env.CHROME_BIN) {
+        throw new Error('Cannot generate pdf');
+      }
       const browser = await puppeteer.launch({
-        args: ['--no-sandbox'],
+        args: [
+          '--no-sandbox',
+          '--headless',
+          '--disable-gpu',
+          '--disable-dev-shm-usage',
+        ],
+        executablePath: process.env.CHROME_BIN,
         headless: true,
       });
       const newPage = await browser.newPage();
@@ -262,7 +271,7 @@ export class TransactionLogsController {
       return new StreamableFile(pdf, { type: 'application/pdf' });
     } catch (error) {
       console.log(error);
-      throw new BadRequestException('Invalid sell log id');
+      throw new BadRequestException(error.message);
     }
   }
 }
