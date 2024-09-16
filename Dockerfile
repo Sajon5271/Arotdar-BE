@@ -9,7 +9,6 @@ WORKDIR /app
 # ENV COOKIE_SECRET=''
 # ENV JWT_SECRET=''
 # ------------------------------------------------------------
-ENV NODE_ENV='production'
 ENV CHROME_BIN="/usr/bin/chromium-browser" \
   PUPPETEER_SKIP_CHROMIUM_DOWNLOAD="true"
 RUN set -x \
@@ -24,5 +23,6 @@ RUN npm install
 RUN npm install pm2 -g
 COPY . .
 RUN npm run build
+ENV NODE_ENV='production'
 CMD [ "pm2-runtime", "./dist/main.js" ] 
 EXPOSE 3000
