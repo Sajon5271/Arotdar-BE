@@ -45,7 +45,7 @@ export class ProfitService {
       const createdDateTime = DateTime.fromJSDate(sell.createdAt);
       const sellMonth = createdDateTime.toFormat('LLL');
       monthProfitObj[sellMonth] =
-        monthProfitObj[sellMonth] || 0 + profitForSell;
+        (monthProfitObj[sellMonth] || 0) + profitForSell;
     });
     return Object.values<number>(monthProfitObj);
   }
@@ -74,7 +74,7 @@ export class ProfitService {
       const createdDateTime = DateTime.fromJSDate(sell.createdAt);
       const sellDate = createdDateTime.toFormat('D');
       profitObjForDays[sellDate] =
-        profitObjForDays[sellDate] || 0 + profitForSell;
+        (profitObjForDays[sellDate] || 0) + profitForSell;
     });
     return Object.values<number>(profitObjForDays);
   }
