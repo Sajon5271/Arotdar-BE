@@ -31,6 +31,16 @@ export class TransactionLogsService {
       .sort({ createdAt: order });
   }
 
+  async getAllofTypeForPartner(
+    transactionType: TransactionType,
+    partnerId: string,
+    order: SortOrder = 'desc',
+  ) {
+    return await this.transactionLogs
+      .find({ transactionType, partnerId })
+      .sort({ createdAt: order });
+  }
+
   async addNewTransaction(data: NewTransactionDto, updatedBy: string) {
     // const product = await this.inventoryService.updateQuantity(
     //   data.productId,

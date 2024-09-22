@@ -16,7 +16,10 @@ import { BuyLogs } from '../schemas/buy-logs.schema';
 import { SellLogs } from '../schemas/sell-logs.schema';
 import { TransactionLogs } from '../schemas/transaction-logs.schema';
 import { PaginationDto } from '../shared/dtos/paginated.dto';
-import { GenericObjectResponse } from '../swagger/GenericResponseDecorator';
+import {
+  GenericArrayResponse,
+  GenericObjectResponse,
+} from '../swagger/GenericResponseDecorator';
 import { PaginatedResults } from '../trading-partners/dtos/paginated-response.dto';
 import { PublicUserProperties } from '../users/public-user-properties';
 import { BuyProductDTO } from './dtos/buy-products.dto';
@@ -31,6 +34,8 @@ import { readFile } from 'fs/promises';
 import path from 'path';
 import Handlebars from 'handlebars';
 import puppeteer from 'puppeteer-core';
+import { TransactionType } from '../enums/Transaction.enum';
+import { ParamDto } from '../shared/dtos/param.dto';
 
 @ApiTags('Transactions')
 @ApiCookieAuth()
@@ -211,6 +216,23 @@ export class TransactionLogsController {
     @CurrentUser() user: PublicUserProperties,
   ) {
     return this.transactionLogsService.addDueUpdateTransaction(data, user._id);
+  }
+
+  @Post('get-dues-update-log')
+  @GenericArrayResponse(TransactionLogs)
+  @Roles(['admin'])
+  getAllDuesLog() {
+    return this.transactionLogsService.getAllOfType(TransactionType.DuePayment);
+  }
+
+  @Post('get-dues-update-log-for-partner/:id')
+  @GenericArrayResponse(TransactionLogs)
+  @Roles(['admin'])
+  getPartnerDuesLog(@Param() param: ParamDto) {
+    return this.transactionLogsService.getAllofTypeForPartner(
+      TransactionType.DuePayment,
+      param.id,
+    );
   }
 
   @Get('generate-receipt/:id')
