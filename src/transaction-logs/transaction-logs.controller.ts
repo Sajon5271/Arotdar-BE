@@ -210,7 +210,7 @@ export class TransactionLogsController {
 
   @Post('update-dues')
   @GenericObjectResponse(TransactionLogs)
-  @Roles(['admin'])
+  @Roles(['admin', 'employee'])
   updateDueAmount(
     @Body() data: UpdateDueOfPartners,
     @CurrentUser() user: PublicUserProperties,
