@@ -34,11 +34,11 @@ export class ProductDto {
   @IsOptional()
   productDescription?: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   // @Min(0)
   @IsOptional()
   @IsNumber({}, { message: 'Quantity must be a number' })
-  totalCurrentQuantity: number;
+  totalCurrentQuantity?: number;
 
   @ApiProperty()
   @Min(0, { message: 'Price cannot be less than 0' })
