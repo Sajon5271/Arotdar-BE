@@ -28,7 +28,10 @@ import { UpdateDueOfPartners } from './dtos/update-due-amount.dto';
 import { BuyService } from './services/buy.service';
 import { SellService } from './services/sell.service';
 import { TransactionLogsService } from './transaction-logs.service';
-import { PaginatedRangeDTO } from './dtos/paginated-range.dto';
+import {
+  PaginatedRangeDTO,
+  PaginatedRangeWithoutPartnerDTO,
+} from './dtos/paginated-range.dto';
 import { IsMongoId } from 'class-validator';
 import { readFile } from 'fs/promises';
 import path from 'path';
@@ -36,6 +39,7 @@ import Handlebars from 'handlebars';
 import puppeteer from 'puppeteer-core';
 import { TransactionType } from '../enums/Transaction.enum';
 import { ParamDto } from '../shared/dtos/param.dto';
+import { DateRangeDto } from '../profit/dtos/date-range.dto';
 
 @ApiTags('Transactions')
 @ApiCookieAuth()
@@ -224,14 +228,36 @@ export class TransactionLogsController {
   getAllDuesLog() {
     return this.transactionLogsService.getAllOfType(TransactionType.DuePayment);
   }
-
-  @Post('get-dues-update-log-for-partner/:id')
+  @Post('get-dues-update-log-in-date-range')
   @GenericArrayResponse(TransactionLogs)
   @Roles(['admin'])
-  getPartnerDuesLog(@Param() param: ParamDto) {
-    return this.transactionLogsService.getAllofTypeForPartner(
+  getAllDuesLogInDateRange(@Body() range: PaginatedRangeWithoutPartnerDTO) {
+    if (!range.from) throw new BadRequestException('Date range is required');
+    if (!range.to) range.to = DateTime.now().toISO();
+    return this.transactionLogsService.getAllOfTypeForDateRange(
       TransactionType.DuePayment,
-      param.id,
+      range.from,
+      range.to,
+      range.pageNumber,
+      range.pageSize,
+    );
+  }
+
+  @Post('get-dues-update-log-for-partner')
+  @GenericArrayResponse(TransactionLogs)
+  @Roles(['admin'])
+  getPartnerDuesLog(@Body() range: PaginatedRangeDTO) {
+    if (!range.from) throw new BadRequestException('Date range is required');
+    if (!range.partnerId)
+      throw new BadRequestException('Partner ID is required');
+    if (!range.to) range.to = DateTime.now().toISO();
+    return this.transactionLogsService.getAllofTypeForPartnerForDateRange(
+      TransactionType.DuePayment,
+      range.partnerId,
+      range.from,
+      range.to,
+      range.pageNumber,
+      range.pageSize,
     );
   }
 

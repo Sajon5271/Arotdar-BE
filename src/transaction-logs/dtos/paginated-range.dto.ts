@@ -10,6 +10,11 @@ export class PartnerId {
   partnerId?: string;
 }
 
+export class PaginatedRangeWithoutPartnerDTO extends IntersectionType(
+  PaginationDto,
+  DateRangeDtoOptional,
+) {}
+
 export class PaginatedRangeDTO extends IntersectionType(
   PaginationDto,
   DateRangeDtoOptional,

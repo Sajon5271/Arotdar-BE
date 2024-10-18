@@ -31,6 +31,21 @@ export class TransactionLogsService {
       .sort({ createdAt: order });
   }
 
+  async getAllOfTypeForDateRange(
+    transactionType: TransactionType,
+    dateFrom: string,
+    dateTo: string,
+    pageNumber: number = 0,
+    pageSize: number = 10,
+    order: SortOrder = 'desc',
+  ): Promise<TransactionLogs[]> {
+    return await this.transactionLogs
+      .find({ transactionType, createdAt: { $gte: dateFrom, $lte: dateTo } })
+      .sort({ createdAt: order })
+      .skip(pageNumber * pageSize)
+      .limit(pageSize);
+  }
+
   async getAllofTypeForPartner(
     transactionType: TransactionType,
     partnerId: string,
@@ -39,6 +54,25 @@ export class TransactionLogsService {
     return await this.transactionLogs
       .find({ transactionType, partnerId })
       .sort({ createdAt: order });
+  }
+  async getAllofTypeForPartnerForDateRange(
+    transactionType: TransactionType,
+    partnerId: string,
+    dateFrom: string,
+    dateTo: string,
+    pageNumber: number = 0,
+    pageSize: number = 10,
+    order: SortOrder = 'desc',
+  ) {
+    return await this.transactionLogs
+      .find({
+        transactionType,
+        partnerId,
+        createdAt: { $gte: dateFrom, $lte: dateTo },
+      })
+      .sort({ createdAt: order })
+      .skip(pageNumber * pageSize)
+      .limit(pageSize);
   }
 
   async addNewTransaction(data: NewTransactionDto, updatedBy: string) {

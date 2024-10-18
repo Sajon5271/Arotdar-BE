@@ -36,7 +36,7 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('Arotdar app backend')
     .setDescription(
-      'Backend for an app that implements a simple inventory mangement system for a particular client',
+      'Backend for an app that implements a simple inventory management system for a particular client',
     )
     .setVersion('0.1')
     .build();
