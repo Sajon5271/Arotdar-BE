@@ -19,6 +19,16 @@ export class ProductDto {
   @IsNotEmpty({ message: 'Product name is required' })
   productName: string;
 
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty({ message: 'SupplierId is required' })
+  supplierId: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty({ message: 'SupplierName is required' })
+  supplierName: string;
+
   @ApiPropertyOptional()
   @IsString()
   @IsOptional()

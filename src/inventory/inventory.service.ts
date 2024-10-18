@@ -17,7 +17,8 @@ export class InventoryService {
     const productToCreate: Inventory = {
       currentPricePerUnit: product.currentPricePerUnit,
       lotIdsContainingProduct: [],
-      currentAvailableSuppliers: [],
+      supplierId: product.supplierId,
+      supplierName: product.supplierName,
       productName: product.productName,
       totalCurrentQuantity: product.totalCurrentQuantity || 0,
       productDescription: product.productDescription,
@@ -96,7 +97,6 @@ export class InventoryService {
       if (info.quantity) {
         product.totalCurrentQuantity += info.quantity;
         product.lotIdsContainingProduct.push(info.newLotId);
-        product.currentAvailableSuppliers.push(supplier);
       }
       promisesToSave.push(product.save());
     });
@@ -108,14 +108,12 @@ export class InventoryService {
     id: string,
     quantity: number,
     currentLotIdsRemaining: string[],
-    supplierIdsRemaining: string[],
   ): Promise<Inventory> {
     const product = await this.inventory.findById(id);
     if (!product) throw new NotFoundException('Product not found');
     if (quantity) {
       product.totalCurrentQuantity = quantity;
       product.lotIdsContainingProduct = currentLotIdsRemaining;
-      product.currentAvailableSuppliers = supplierIdsRemaining;
     }
     await product.save();
     return product;
@@ -137,14 +135,10 @@ export class InventoryService {
       if (currentMapVal) {
         currentMapVal.totalCurrentQuantity += lot.quantityRemaining;
         currentMapVal.lotIdsContainingProduct.push(lot._id.toString());
-        if (!currentMapVal.currentAvailableSuppliers.includes(lot.supplierId)) {
-          currentMapVal.currentAvailableSuppliers.push(lot.supplierId);
-        }
       } else {
         inventoryUpdateMap.set(lot.lotProductId, {
           totalCurrentQuantity: lot.quantityRemaining,
           lotIdsContainingProduct: [lot._id.toString()],
-          currentAvailableSuppliers: [lot.supplierId],
         });
       }
     });
@@ -154,7 +148,6 @@ export class InventoryService {
         this.updateProduct(
           val._id,
           inventoryUpdateMap.get(val._id.toString()) || {
-            currentAvailableSuppliers: [],
             lotIdsContainingProduct: [],
             totalCurrentQuantity: 0,
           },

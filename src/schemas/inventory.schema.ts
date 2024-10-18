@@ -19,15 +19,19 @@ export class Inventory {
 
   @ApiProperty()
   @Prop({ required: true })
+  supplierId: string;
+
+  @ApiProperty()
+  @Prop({ required: true })
+  supplierName: string;
+
+  @ApiProperty()
+  @Prop({ required: true })
   totalCurrentQuantity: number;
 
   @ApiPropertyOptional()
   @Prop({ required: true, default: [] })
   lotIdsContainingProduct: string[];
-
-  @ApiPropertyOptional()
-  @Prop({ required: true, default: [] })
-  currentAvailableSuppliers: string[];
 
   @ApiProperty()
   @Prop({ required: true })
