@@ -19,6 +19,8 @@ export class SellProductDTO {
         productId: { type: 'string' },
         quantityTraded: { type: 'number' },
         pricePerUnit: { type: 'number' },
+        supplierId: { type: 'string' },
+        supplierName: { type: 'string' },
         discount: { type: 'number', default: 0 },
       },
     },

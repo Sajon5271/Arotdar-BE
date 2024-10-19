@@ -1,11 +1,9 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
   ArrayNotEmpty,
   IsArray,
-  IsMongoId,
   IsNumber,
-  IsOptional,
   ValidateNested,
 } from 'class-validator';
 import { BuyProductInfoDTO } from './partials/product.dto';
@@ -19,6 +17,8 @@ export class BuyProductDTO {
         productId: { type: 'string' },
         quantityTraded: { type: 'number' },
         pricePerUnit: { type: 'number' },
+        supplierId: { type: 'string' },
+        supplierName: { type: 'string' },
       },
     },
   })
@@ -27,14 +27,6 @@ export class BuyProductDTO {
   @ValidateNested({ each: true })
   @Type(() => BuyProductInfoDTO)
   products: BuyProductInfoDTO[];
-
-  @ApiProperty()
-  @IsMongoId({ message: 'Invalid Partner Id' })
-  partnerId: string;
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  partnerName?: string;
 
   @ApiProperty()
   @IsNumber({}, { message: 'Due must be a number' })

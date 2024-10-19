@@ -22,20 +22,14 @@ export class BuyLogs {
         quantityTraded: { type: 'number' },
         productName: { type: 'string' },
         pricePerUnit: { type: 'number' },
+        supplierId: { type: 'string' },
+        supplierName: { type: 'string' },
         discount: { type: 'number', default: 0 },
       },
     },
   })
   @Prop({ required: true, type: [TradedProductSchema] })
   products: TradedProduct[];
-
-  @ApiProperty()
-  @Prop({ required: true })
-  partnerId: string;
-
-  @ApiProperty()
-  @Prop()
-  partnerName?: string;
 
   @ApiProperty()
   @Prop({ required: true })

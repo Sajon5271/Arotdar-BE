@@ -276,6 +276,7 @@ export class TransactionLogsController {
         name: el.productName,
         quantity: el.quantityTraded,
         pricePerUnit: el.pricePerUnit,
+        supplierName: el.supplierName,
         total: el.quantityTraded * el.pricePerUnit,
       }));
       const totalDiscount = sellLog.products.reduce(

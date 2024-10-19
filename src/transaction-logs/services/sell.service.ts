@@ -32,7 +32,7 @@ export class SellService {
       const lotForProduct = allLotsToUpdate.filter(
         (lot) =>
           lot.lotProductId === item.productId &&
-          lot.supplierId === item.fromSupplier,
+          lot.supplierId === item.supplierId,
       );
       const currentQuantity = lotForProduct.reduce(
         (total, curr) => total + curr.quantityRemaining,
@@ -48,7 +48,7 @@ export class SellService {
       const lotForProduct = allLotsToUpdate.filter(
         (lot) =>
           lot.lotProductId === item.productId &&
-          lot.supplierId === item.fromSupplier,
+          lot.supplierId === item.supplierId,
       );
       let productRemainingToCalc = item.quantityTraded;
       const buyingPrices = [];

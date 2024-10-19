@@ -19,8 +19,12 @@ export class ProductLotService {
     });
   }
   async addMultipleNewLot(
-    products: { productId: string; price: number; quantity: number }[],
-    supplierId: string,
+    products: {
+      productId: string;
+      price: number;
+      quantity: number;
+      supplierId: string;
+    }[],
   ) {
     return this.productLot.insertMany(
       products.map((p) => {
@@ -29,7 +33,7 @@ export class ProductLotService {
           buyingPrice: p.price,
           quantityBought: p.quantity,
           quantityRemaining: p.quantity,
-          supplierId,
+          supplierId: p.supplierId,
         };
       }),
     );

@@ -126,8 +126,25 @@ export class TradingPartnersController {
 
   @Get('suppliers-with-product-info')
   @Roles(['admin', 'employee', 'superadmin'])
-  getSuppliersWithProductInfo() {
-    return this.tradingPartnersService.getSupplierWithQuantities();
+  async getSuppliersWithProductInfo(@Query() paginatedQuery: PaginationDto) {
+    const allSuppliers =
+      await this.tradingPartnersService.getSupplierWithQuantities();
+    const res = allSuppliers
+      .toSorted((a, b) => {
+        // TODO: Need to implement sorting
+        return 0;
+      })
+      .slice(
+        paginatedQuery.pageNumber * paginatedQuery.pageSize,
+        (paginatedQuery.pageNumber + 1) * paginatedQuery.pageSize,
+      );
+    return {
+      CurrentPage: paginatedQuery.pageNumber,
+      PageSize: paginatedQuery.pageSize,
+      Results: res,
+      TotalPages: Math.ceil(allSuppliers.length / paginatedQuery.pageSize),
+      TotalDataLength: allSuppliers.length,
+    };
   }
 
   @Post('add-partner')

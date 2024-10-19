@@ -68,6 +68,7 @@ export class GenericInterceptor<T>
         };
       }),
       catchError((err) => {
+        console.log(err);
         let message: string | string[] = 'Internal Server Error';
         let status = 500;
         if (err instanceof HttpException) {

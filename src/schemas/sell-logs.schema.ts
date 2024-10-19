@@ -22,6 +22,8 @@ export class SellLogs {
         productName: { type: 'string' },
         quantityTraded: { type: 'number' },
         pricePerUnit: { type: 'number' },
+        supplierId: { type: 'string' },
+        supplierName: { type: 'string' },
         discount: { type: 'number', default: 0 },
         buyingPrices: {
           type: 'array',

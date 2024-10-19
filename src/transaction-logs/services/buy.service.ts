@@ -28,9 +28,9 @@ export class BuyService {
           price: prod.pricePerUnit,
           productId: prod.productId,
           quantity: prod.quantityTraded,
+          supplierId: prod.supplierId,
         };
       }),
-      info.partnerId,
     );
     const lotIds = lots.map((lot) => lot._id);
     const lotProductMaps = lots.map((el) => {
@@ -40,20 +40,16 @@ export class BuyService {
         newLotId: el._id.toString(),
       };
     });
-    await this.inventoryService.buyingMultipleInventory(
-      lotProductMaps,
-      info.partnerId,
-    );
-    const productsToSave: TradedProduct[] = [];
-    info.products.forEach(async (product) => {
-      productsToSave.push({
+    await this.inventoryService.buyingMultipleInventory(lotProductMaps);
+    const productsToSave: TradedProduct[] = info.products.map((product) => {
+      return {
         ...product,
         productName: allProductNameMap[product.productId],
-      });
+      };
     });
 
     await this.tradingPartnersService.updatePartnerWithNewTransaction(
-      info.partnerId,
+      info.products[0].supplierId,
       info.products.reduce((a, c) => a + c.quantityTraded, 0),
       info.due,
       info.paid,

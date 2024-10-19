@@ -81,7 +81,6 @@ export class InventoryService {
 
   async buyingMultipleInventory(
     products: { id: string; quantity: number; newLotId: string }[],
-    supplier: string,
   ): Promise<Inventory[]> {
     const productsToUpdate = await this.inventory.find({
       _id: { $in: products.map((el) => el.id) },
