@@ -232,8 +232,16 @@ export class TransactionLogsController {
   @GenericArrayResponse(TransactionLogs)
   @Roles(['admin'])
   getAllDuesLogInDateRange(@Body() range: PaginatedRangeWithoutPartnerDTO) {
-    if (!range.from) throw new BadRequestException('Date range is required');
-    if (!range.to) range.to = DateTime.now().toISO();
+    if (!range.from) {
+      range.from = DateTime.fromMillis(0).toISO();
+    } else {
+      range.from = DateTime.fromISO(range.from).startOf('day').toISO();
+    }
+    if (!range.to) {
+      range.to = DateTime.now().endOf('day').toISO();
+    } else {
+      range.to = DateTime.fromISO(range.to).endOf('day').toISO();
+    }
     return this.transactionLogsService.getAllOfTypeForDateRange(
       TransactionType.DuePayment,
       range.from,
@@ -247,10 +255,18 @@ export class TransactionLogsController {
   @GenericArrayResponse(TransactionLogs)
   @Roles(['admin'])
   getPartnerDuesLog(@Body() range: PaginatedRangeDTO) {
-    if (!range.from) throw new BadRequestException('Date range is required');
     if (!range.partnerId)
       throw new BadRequestException('Partner ID is required');
-    if (!range.to) range.to = DateTime.now().toISO();
+    if (!range.from) {
+      range.from = DateTime.fromMillis(0).toISO();
+    } else {
+      range.from = DateTime.fromISO(range.from).startOf('day').toISO();
+    }
+    if (!range.to) {
+      range.to = DateTime.now().endOf('day').toISO();
+    } else {
+      range.to = DateTime.fromISO(range.to).endOf('day').toISO();
+    }
     return this.transactionLogsService.getAllofTypeForPartnerForDateRange(
       TransactionType.DuePayment,
       range.partnerId,

@@ -1,5 +1,4 @@
-import { ApiProperty, getSchemaPath } from '@nestjs/swagger';
-import { TradingPartner } from '../../schemas/trading-partners.schema';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class PaginatedResults<T> {
   @ApiProperty()

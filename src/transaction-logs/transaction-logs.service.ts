@@ -8,6 +8,7 @@ import { TradingPartnersService } from '../trading-partners/trading-partners.ser
 import { NewTransactionDto } from './dtos/new-transaction.dto';
 import { UpdateDueOfPartners } from './dtos/update-due-amount.dto';
 import { CustomerType, PartnerType } from '../enums/UserTypes.enum';
+import { PaginatedResults } from '../trading-partners/dtos/paginated-response.dto';
 
 @Injectable()
 export class TransactionLogsService {
@@ -38,12 +39,24 @@ export class TransactionLogsService {
     pageNumber: number = 0,
     pageSize: number = 10,
     order: SortOrder = 'desc',
-  ): Promise<TransactionLogs[]> {
-    return await this.transactionLogs
-      .find({ transactionType, createdAt: { $gte: dateFrom, $lte: dateTo } })
+  ): Promise<PaginatedResults<TransactionLogs>> {
+    const query = {
+      transactionType,
+      createdAt: { $gte: dateFrom, $lte: dateTo },
+    };
+    const count = await this.transactionLogs.countDocuments(query);
+    const docs = await this.transactionLogs
+      .find(query)
       .sort({ createdAt: order })
       .skip(pageNumber * pageSize)
       .limit(pageSize);
+    return {
+      CurrentPage: pageNumber,
+      PageSize: pageSize,
+      Results: docs,
+      TotalDataLength: count,
+      TotalPages: Math.ceil(count / pageSize),
+    };
   }
 
   async getAllofTypeForPartner(
@@ -63,16 +76,25 @@ export class TransactionLogsService {
     pageNumber: number = 0,
     pageSize: number = 10,
     order: SortOrder = 'desc',
-  ) {
-    return await this.transactionLogs
-      .find({
-        transactionType,
-        partnerId,
-        createdAt: { $gte: dateFrom, $lte: dateTo },
-      })
+  ): Promise<PaginatedResults<TransactionLogs>> {
+    const query = {
+      transactionType,
+      partnerId,
+      createdAt: { $gte: dateFrom, $lte: dateTo },
+    };
+    const count = await this.transactionLogs.countDocuments(query);
+    const docs = await this.transactionLogs
+      .find(query)
       .sort({ createdAt: order })
       .skip(pageNumber * pageSize)
       .limit(pageSize);
+    return {
+      CurrentPage: pageNumber,
+      PageSize: pageSize,
+      Results: docs,
+      TotalDataLength: count,
+      TotalPages: Math.ceil(count / pageSize),
+    };
   }
 
   async addNewTransaction(data: NewTransactionDto, updatedBy: string) {
